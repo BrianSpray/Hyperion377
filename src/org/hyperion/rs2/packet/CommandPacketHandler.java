@@ -1,5 +1,7 @@
 package org.hyperion.rs2.packet;
 
+import org.hyperion.rs2.content.combat.Combat;
+import org.hyperion.rs2.content.combat.Combat.AttackType;
 import org.hyperion.rs2.content.minigames.PestControl;
 import org.hyperion.rs2.event.Event;
 import org.hyperion.rs2.model.Animation;
@@ -123,6 +125,11 @@ public class CommandPacketHandler implements PacketHandler {
 					player.getSkills().setLevel(i, 99);
 					player.getSkills().setExperience(i, 13034431);
 				}
+			} else if(command.startsWith("nvn")) {
+				AttackType type = AttackType.MELEE;
+				NPC npc1 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[1]));
+				NPC npc2 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[2]));
+				Combat.doAttack(npc1, npc2, type);
 			} else if(command.startsWith("empty")) {
 				player.getInventory().clear();
 				player.getActionSender().sendMessage("Your inventory has been emptied.");
