@@ -86,10 +86,29 @@ public class CommandPacketHandler implements PacketHandler {
 				NPC npc = new NPC(NPCDefinition.forId(id));
 				npc.setLocation(Location.create(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
 				World.getWorld().register(npc);
+			} else if (command.startsWith("cannon")) {				
+				player.getActionSender().sendAddObject(player.getLocation(), 6, 10, 2);
+				World.getWorld().submit(new Event(600) {
+					int animId = 514;
+	
+					@Override
+					public void execute() {
+						if(animId == 521) {
+							animId = 514;
+						} else {
+							animId++;
+						}
+						player.getActionSender().sendObjectAnimation(player.getLocation(), animId, 10, -1);
+						//player.getActionSender().sendMessage("Animation Id:" + animId);
+					}					
+				});
+			} else if(command.startsWith("hintp")) {
+				int index = Integer.parseInt(args[1]);
+				player.getActionSender().sendHintIconNPC(index);
 			} else if(command.equals("interface")) {
 				int id = Integer.parseInt(args[1]);
 				player.getActionSender().sendInterface(id);
-			} else if(command.equals("c")) {
+			} else if(command.equals("cinterface")) {
 				int id = Integer.parseInt(args[1]);
 				player.getActionSender().sendChatBoxInterface(id);
 			} else if(command.equals("pc")) {
@@ -125,11 +144,6 @@ public class CommandPacketHandler implements PacketHandler {
 					player.getSkills().setLevel(i, 99);
 					player.getSkills().setExperience(i, 13034431);
 				}
-			} else if(command.startsWith("nvn")) {
-				AttackType type = AttackType.MELEE;
-				NPC npc1 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[1]));
-				NPC npc2 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[2]));
-				Combat.doAttack(npc1, npc2, type);
 			} else if(command.startsWith("empty")) {
 				player.getInventory().clear();
 				player.getActionSender().sendMessage("Your inventory has been emptied.");
@@ -172,6 +186,11 @@ public class CommandPacketHandler implements PacketHandler {
 				} catch(Exception e) {
 					
 				}
+			} else if(command.startsWith("nvn")) {
+				AttackType type = AttackType.MELEE;
+				NPC npc1 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[1]));
+				NPC npc2 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[2]));
+				Combat.doAttack(npc1, npc2, type);
 			} else if(command.startsWith("goto")) {
 				if(args.length == 3) {
 					try {

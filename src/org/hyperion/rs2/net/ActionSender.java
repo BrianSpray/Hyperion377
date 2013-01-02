@@ -5,13 +5,10 @@ import java.awt.Color;
 import org.hyperion.rs2.Constants;
 import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.Location;
-import org.hyperion.rs2.model.NPC;
-import org.hyperion.rs2.model.NPCDefinition;
 import org.hyperion.rs2.model.Palette;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.Palette.PaletteTile;
-import org.hyperion.rs2.model.World;
 import org.hyperion.rs2.model.container.Equipment;
 import org.hyperion.rs2.model.container.Inventory;
 import org.hyperion.rs2.model.container.impl.EquipmentContainerListener;
@@ -40,18 +37,6 @@ public class ActionSender {
 	}
 	
 	/**
-	 * Sends an inventory interface.
-	 * @param interfaceId The interface id.
-	 * @param inventoryInterfaceId The inventory interface id.
-	 * @return The action sender instance, for chaining.
-	 */
-	public ActionSender sendInterfaceInventory(int interfaceId, int inventoryInterfaceId) {
-		player.getInterfaceState().interfaceOpened(interfaceId);
-		player.write(new PacketBuilder(128).putShortA(interfaceId).putLEShortA(inventoryInterfaceId).toPacket());
-		return this;
-	}
-	
-	/**
 	 * Sends all the login packets.
 	 * @return The action sender instance, for chaining.
 	 */
@@ -69,8 +54,7 @@ public class ActionSender {
 		
 		sendMapRegion();
 		
-		NPC npc = new NPC(NPCDefinition.forId(1));
-		npc.setLocation(Location.create(3222, 3223, 0));
+		sendGroundItem(Location.create(3222, 3223, 0), 4151, 0, 1);
 		
 		sendSidebarInterfaces();
 		
@@ -93,8 +77,8 @@ public class ActionSender {
 
 
 		
-		sendInteractionOption("Follow", 2, true);
-		sendInteractionOption("Trade with", 3, true);
+		sendInteractionOption("Follow", 3, true);
+		sendInteractionOption("Trade with", 4, true);
 		
 		InterfaceContainerListener inventoryListener = new InterfaceContainerListener(player, Inventory.INTERFACE);
 		player.getInventory().addListener(inventoryListener);
@@ -209,7 +193,19 @@ public class ActionSender {
 	    packet.putShort(interfaceId);
 	    player.write(packet.toPacket());
 		return this;
-	}	
+	}		
+	
+	/**
+	 * Sends an inventory interface.
+	 * @param interfaceId The interface id.
+	 * @param inventoryInterfaceId The inventory interface id.
+	 * @return The action sender instance, for chaining.
+	 */
+	public ActionSender sendInterfaceInventory(int interfaceId, int inventoryInterfaceId) {
+		player.getInterfaceState().interfaceOpened(interfaceId);
+		player.write(new PacketBuilder(128).putShortA(interfaceId).putLEShortA(inventoryInterfaceId).toPacket());
+		return this;
+	}
 	
 	/**
 	 * Does not close when walking, or opening another interface
@@ -517,8 +513,9 @@ public class ActionSender {
 		return this;
 	}
 	
-	public ActionSender sendGroundItem(int itemId, int offset, int itemAmount) {
-		PacketBuilder packet = new PacketBuilder(106);
+	public ActionSender sendGroundItem(Location location, int itemId, int offset, int itemAmount) {
+		PacketBuilder packet = new PacketBuilder(107);
+		sendSetCurrentPlacement(location);
 		packet.putShort(itemId);
 		packet.putByteC(offset);
 		packet.putShortA(itemAmount);
@@ -530,12 +527,32 @@ public class ActionSender {
 	 * Sends the Current placement in an 8x8 region
 	 * @return
 	 */
-	public ActionSender sendSetCurrentPlacement(int placementX, int placementY) {
+	public ActionSender sendSetCurrentLocalPlacement(Location location) {
 		PacketBuilder packet = new PacketBuilder(75);
-		packet.putByteC(placementX);
-		packet.putByteA(placementY);
+		packet.putByteC(location.getLocalX());
+		packet.putByteA(location.getLocalY());
 		player.write(packet.toPacket());
 		return this;
+	}
+	
+	/**
+	 * Sends the Current placement in an 8x8 region
+	 * @return
+	 */
+	public ActionSender sendSetCurrentPlacement(Location location) {
+		PacketBuilder packet = new PacketBuilder(75);
+		packet.putByteC(location.getX() - (player.getLastKnownRegion().getRegionX() * 8));
+		packet.putByteA(location.getY() - (player.getLastKnownRegion().getRegionY() * 8));
+		player.write(packet.toPacket());
+		return this;
+	}
+	
+	public ActionSender sendSetCurrentEntityPlacement(Location location) {
+		PacketBuilder packet = new PacketBuilder(183);
+		packet.put((byte) (location.getX() - (player.getLastKnownRegion().getRegionX())));
+		packet.putByteA(location.getY() - (player.getLastKnownRegion().getRegionY()));
+		player.write(packet.toPacket());
+		return this;		
 	}
 	
 	public ActionSender sendConfig(int id, int value) {
@@ -567,6 +584,65 @@ public class ActionSender {
 	
 	public ActionSender sendSynchronizeConfigs() {
 		player.write(new PacketBuilder(113).toPacket()); 
+		return this;
+	}
+	
+	public ActionSender sendHintIconNPC(int index) {
+		PacketBuilder packet = new PacketBuilder(199);
+		packet.put((byte) 1);
+		packet.putShort(index);
+		packet.putShort(0);
+		packet.put((byte) 0);
+		player.write(packet.toPacket());
+		return this;
+	}
+	
+	/**
+	 * 
+	 * @param type: 2 centered, 3 west, 4 east, 5 south, 6 north
+	 * @param xCoord
+	 * @param yCoord
+	 * @param zCoord
+	 * @return
+	 */
+	
+	public ActionSender sendHintIconLocation(int type, int xCoord, int yCoord, byte zCoord) {
+		PacketBuilder packet = new PacketBuilder(199);
+		packet.put((byte) type);
+		packet.putShort(xCoord);
+		packet.putShort(yCoord);
+		packet.put(zCoord);
+		player.write(packet.toPacket());
+		return this;
+	}
+	
+	public ActionSender sendHintIconPlayer(int index) {
+		PacketBuilder packet = new PacketBuilder(199);
+		packet.put((byte) 10);
+		packet.putShort(index);
+		packet.putShort(0);
+		packet.put((byte) 0);
+		player.write(packet.toPacket());
+		return this;
+	}
+	
+	public ActionSender sendObjectAnimation(Location location, int animationId, int objectType, int orientation) {
+		PacketBuilder packet = new PacketBuilder(142);
+		player.getActionSender().sendSetCurrentPlacement(location);
+		packet.putShort(animationId);
+		packet.putByteA((byte) ((objectType << 2) + (orientation & 3)));
+		packet.put((byte) 0);
+		player.write(packet.toPacket());
+		return this;
+	}
+	
+	public ActionSender sendAddObject(Location location, int objectId, int objectType, int orientation) {
+		PacketBuilder packet = new PacketBuilder(152);
+		sendSetCurrentPlacement(location);
+		packet.putByteC((byte) (objectType << 2) + (orientation & 3));
+		packet.putLEShortA(objectId);
+		packet.putByteA((byte) 0);
+		player.write(packet.toPacket());
 		return this;
 	}
 	

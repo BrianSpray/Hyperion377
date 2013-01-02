@@ -12,7 +12,9 @@ public class QuietPacketHandler implements PacketHandler {
 
 	@Override
 	public void handle(Player player, Packet packet) {
-		
+		if (packet.getOpcode() == 202) {
+			//player.getActionSender().sendLogout();
+		}
 	}
 
 }
