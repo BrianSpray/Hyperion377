@@ -6,6 +6,7 @@ import java.util.List;
 import org.hyperion.rs2.model.container.Bank;
 import org.hyperion.rs2.model.container.Container;
 import org.hyperion.rs2.model.container.ContainerListener;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * Contains information about the state of interfaces open in the client.
@@ -112,7 +113,7 @@ public class InterfaceState {
 		enterAmountInterfaceId = interfaceId;
 		enterAmountSlot = slot;
 		enterAmountId = id;
-		player.getActionSender().sendEnterAmountInterface();
+		ActionSender.sendEnterAmountInterface(player);
 	}
 	
 	/**

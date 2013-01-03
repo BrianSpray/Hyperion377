@@ -4,6 +4,7 @@ import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.ItemDefinition;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.container.impl.InterfaceContainerListener;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * Banking utility class.
@@ -33,7 +34,7 @@ public class Bank {
 	 */
 	public static void open(Player player) {
 		player.getBank().shift();
-		player.getActionSender().sendInterfaceInventory(5292, 5063);
+		ActionSender.sendInterfaceInventory(player, 5292, 5063);
 		player.getInterfaceState().addListener(player.getBank(), new InterfaceContainerListener(player, 5382));
 		player.getInterfaceState().addListener(player.getInventory(), new InterfaceContainerListener(player, 5064));
 	}
@@ -68,12 +69,12 @@ public class Bank {
 		ItemDefinition def = ItemDefinition.forId(newId);
 		if(def.isStackable()) {
 			if(player.getInventory().freeSlots() <= 0 && player.getInventory().getById(newId) == null) {
-				player.getActionSender().sendMessage("You don't have enough inventory space to withdraw that many."); // this is the real message
+				ActionSender.sendMessage(player, "You don't have enough inventory space to withdraw that many."); // this is the real message
 			}
 		} else {
 			int free = player.getInventory().freeSlots();
 			if(transferAmount > free) {
-				player.getActionSender().sendMessage("You don't have enough inventory space to withdraw that many."); // this is the real message
+				ActionSender.sendMessage(player, "You don't have enough inventory space to withdraw that many."); // this is the real message
 				transferAmount = free;
 			}
 		}
@@ -87,7 +88,7 @@ public class Bank {
 				player.getBank().set(slot, new Item(item.getId(), newAmount));
 			}
 		} else {
-			player.getActionSender().sendMessage("You don't have enough inventory space to withdraw that many."); // this is the real message
+			ActionSender.sendMessage(player, "You don't have enough inventory space to withdraw that many."); // this is the real message
 		}
 	}
 	
@@ -119,7 +120,7 @@ public class Bank {
 			if(item.getDefinition().isStackable() || noted) {
 				int bankedId = noted ? item.getDefinition().getNormalId() : item.getId();
 				if(player.getBank().freeSlots() < 1 && player.getBank().getById(bankedId) == null) {
-					player.getActionSender().sendMessage("You don't have enough space in your bank account."); // this is the real message
+					ActionSender.sendMessage(player, "You don't have enough space in your bank account."); // this is the real message
 				}
 				// we only need to remove from one stack
 				int newInventoryAmount = item.getCount() - transferAmount;
@@ -130,7 +131,7 @@ public class Bank {
 					newItem = new Item(item.getId(), newInventoryAmount);
 				}
 				if(!player.getBank().add(new Item(bankedId, transferAmount))) {
-					player.getActionSender().sendMessage("You don't have enough space in your bank account."); // this is the real message
+					ActionSender.sendMessage(player, "You don't have enough space in your bank account."); // this is the real message
 				} else {
 					player.getInventory().set(slot, newItem);
 					player.getInventory().fireItemsChanged();
@@ -138,10 +139,10 @@ public class Bank {
 				}
 			} else {
 				if(player.getBank().freeSlots() < transferAmount) {
-					player.getActionSender().sendMessage("You don't have enough space in your bank account."); // this is the real message
+					ActionSender.sendMessage(player, "You don't have enough space in your bank account."); // this is the real message
 				}
 				if(!player.getBank().add(new Item(item.getId(), transferAmount))) {
-					player.getActionSender().sendMessage("You don't have enough space in your bank account."); // this is the real message
+					ActionSender.sendMessage(player, "You don't have enough space in your bank account."); // this is the real message
 				} else {
 					// we need to remove multiple items
 					for(int i = 0; i < transferAmount; i++) {

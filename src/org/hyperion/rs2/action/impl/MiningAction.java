@@ -9,6 +9,7 @@ import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.Location;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * An action for cutting down trees.
@@ -345,16 +346,16 @@ public class MiningAction extends HarvestingAction {
 			}
 		}
 		if(pickaxe == null) {
-			player.getActionSender().sendMessage("You do not have a pickaxe for which you have the level to use.");
+			ActionSender.sendMessage(player, "You do not have a pickaxe for which you have the level to use.");
 			stop();
 			return;
 		}
 		if(mining < node.getRequiredLevel()) {
-			player.getActionSender().sendMessage("You do not have the required level to mine this rock.");
+			ActionSender.sendMessage(player, "You do not have the required level to mine this rock.");
 			stop();
 			return;
 		}
-		player.getActionSender().sendMessage("You swing your pick at the rock...");
+		ActionSender.sendMessage(player, "You swing your pick at the rock...");
 		cycleCount = calculateCycles(player, node, pickaxe);
 		
 	}

@@ -1,6 +1,7 @@
 package org.hyperion.rs2.model;
 
 import org.hyperion.rs2.model.UpdateFlags.UpdateFlag;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * Represents a player's skill and experience levels.
@@ -127,7 +128,7 @@ public class Skills {
 	public void setSkill(int skill, int level, double exp) {
 		levels[skill] = level;
 		exps[skill] = exp;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 	
 	/**
@@ -137,7 +138,7 @@ public class Skills {
 	 */
 	public void setLevel(int skill, int level) {
 		levels[skill] = level;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 	
 	/**
@@ -148,7 +149,7 @@ public class Skills {
 	public void setExperience(int skill, double exp) {
 		int oldLvl = getLevelForExperience(skill);
 		exps[skill] = exp;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 		int newLvl = getLevelForExperience(skill);
 		if(oldLvl != newLvl) {
 			player.getUpdateFlags().flag(UpdateFlag.APPEARANCE);
@@ -161,7 +162,7 @@ public class Skills {
 	 */
 	public void incrementLevel(int skill) {
 		levels[skill]++;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 	
 	/**
@@ -170,7 +171,7 @@ public class Skills {
 	 */
 	public void decrementLevel(int skill) {
 		levels[skill]--;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 	
 	/**
@@ -186,7 +187,7 @@ public class Skills {
 			amount = levels[skill];
 		}
 		levels[skill] = levels[skill] - amount;
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 	
 	/**
@@ -197,10 +198,10 @@ public class Skills {
 		int norm = getLevelForExperience(skill);
 		if(levels[skill] > norm) {
 			levels[skill]--;
-			player.getActionSender().sendSkill(skill);
+			ActionSender.sendSkill(player, skill);
 		} else if(levels[skill] < norm) {
 			levels[skill]++;
-			player.getActionSender().sendSkill(skill);
+			ActionSender.sendSkill(player, skill);
 		}
 	}
 	
@@ -276,7 +277,7 @@ public class Skills {
 			levels[skill] += levelDiff;
 			player.getUpdateFlags().flag(UpdateFlag.APPEARANCE);
 		}
-		player.getActionSender().sendSkill(skill);
+		ActionSender.sendSkill(player, skill);
 	}
 
 }

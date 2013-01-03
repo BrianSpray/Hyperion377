@@ -6,6 +6,7 @@ import org.hyperion.rs2.model.NPC;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.World;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * The death event handles player and npc deaths. Drops loot, does animation, teleportation, etc.
@@ -29,11 +30,11 @@ public class DeathEvent extends Event {
 	@Override
 	public void execute() {
 		if(entity instanceof Player) {
-			Player p = (Player) entity;
-			p.getSkills().setLevel(Skills.HITPOINTS, p.getSkills().getLevelForExperience(Skills.HITPOINTS));
+			Player player = (Player) entity;
+			player.getSkills().setLevel(Skills.HITPOINTS, player.getSkills().getLevelForExperience(Skills.HITPOINTS));
 			entity.setDead(false);
 			entity.setTeleportTarget(Entity.DEFAULT_LOCATION);
-			p.getActionSender().sendMessage("Oh dear, you are dead!");
+			ActionSender.sendMessage(player, "Oh dear, you are dead!");
 			this.stop();
 		}
 	}

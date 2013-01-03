@@ -4,8 +4,11 @@ import org.hyperion.rs2.action.Action;
 import org.hyperion.rs2.content.combat.Combat;
 import org.hyperion.rs2.content.combat.Combat.AttackType;
 import org.hyperion.rs2.model.Entity;
+import org.hyperion.rs2.model.NPC;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.EntityCooldowns.CooldownFlags;
+import org.hyperion.rs2.model.World;
+import org.hyperion.rs2.util.EntityList;
 
 /**
  * Handles an action for an attacking player.

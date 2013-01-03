@@ -14,6 +14,7 @@ import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.World;
 import org.hyperion.rs2.model.container.Bank;
+import org.hyperion.rs2.net.ActionSender;
 import org.hyperion.rs2.net.Packet;
 import org.hyperion.rs2.pf.AStarPathFinder;
 import org.hyperion.rs2.pf.Path;
@@ -46,10 +47,10 @@ public class CommandPacketHandler implements PacketHandler {
 					}
 					player.setTeleportTarget(Location.create(x, y, z));
 				} else {
-					player.getActionSender().sendMessage("Syntax is ::tele [x] [y] [z].");
+					ActionSender.sendMessage(player, "Syntax is ::tele [x] [y] [z].");
 				}
 			} else if(command.equals("pos")) {
-				player.getActionSender().sendMessage("You are at: " + player.getLocation() + ".");
+				ActionSender.sendMessage(player, "You are at: " + player.getLocation() + ".");
 			} else if(command.equals("item")) {
 				if(args.length == 2 || args.length == 3) {
 					int id = Integer.parseInt(args[1]);
@@ -59,7 +60,7 @@ public class CommandPacketHandler implements PacketHandler {
 					}
 					player.getInventory().add(new Item(id, count));
 				} else {
-					player.getActionSender().sendMessage("Syntax is ::item [id] [count].");
+					ActionSender.sendMessage(player, "Syntax is ::item [id] [count].");
 				}
 			} else if(command.equals("anim")) {
 				if(args.length == 2 || args.length == 3) {
@@ -87,7 +88,7 @@ public class CommandPacketHandler implements PacketHandler {
 				npc.setLocation(Location.create(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
 				World.getWorld().register(npc);
 			} else if (command.startsWith("cannon")) {				
-				player.getActionSender().sendAddObject(player.getLocation(), 6, 10, 2);
+				ActionSender.sendAddGlobalObject(player, player.getLocation(), 6, 10, 2);
 				World.getWorld().submit(new Event(600) {
 					int animId = 514;
 	
@@ -98,47 +99,47 @@ public class CommandPacketHandler implements PacketHandler {
 						} else {
 							animId++;
 						}
-						player.getActionSender().sendObjectAnimation(player.getLocation(), animId, 10, -1);
-						//player.getActionSender().sendMessage("Animation Id:" + animId);
+						ActionSender.sendObjectAnimation(player, 3222, 3222, animId, 10, -1);
+						//ActionSender.sendMessage(player, "Animation Id:" + animId);
 					}					
 				});
 			} else if(command.startsWith("hintp")) {
 				int index = Integer.parseInt(args[1]);
-				player.getActionSender().sendHintIconNPC(index);
+				ActionSender.sendHintIconPlayer(player, index);
 			} else if(command.equals("interface")) {
 				int id = Integer.parseInt(args[1]);
-				player.getActionSender().sendInterface(id);
+				ActionSender.sendInterface(player, id);
 			} else if(command.equals("cinterface")) {
 				int id = Integer.parseInt(args[1]);
-				player.getActionSender().sendChatBoxInterface(id);
+				ActionSender.sendChatBoxInterface(player, id);
 			} else if(command.equals("pc")) {
 				PestControl.sendPestControlRewardsInterface(player);
 			} else if (command.equals("config")) {
 				int settingState = Integer.parseInt(args[1]);
 				int settingId = Integer.parseInt(args[2]);
-				player.getActionSender().sendConfig1(settingState, settingId);		
+				ActionSender.sendConfig(player, settingState, settingId);		
 			} else if (command.equals("playerh")) {
-				player.getActionSender().sendString(970, player.getName());
-				player.getActionSender().sendString(971, "I think this text box works.");
-				player.getActionSender().sendInterfaceAnimation(969, 588);
-				player.getActionSender().sendPlayerHead(969);
-				player.getActionSender().sendChatBoxInterface(968);
+				ActionSender.sendString(player, 970, player.getName());
+				ActionSender.sendString(player, 971, "I think this text box works.");
+				ActionSender.sendInterfaceAnimation(player, 969, 588);
+				ActionSender.sendPlayerHead(player, 969);
+				ActionSender.sendChatBoxInterface(player, 968);
 			} else if (command.equals("playerh2")) {
-				player.getActionSender().sendString(12742, "Dondakan the Dwarf");
-				player.getActionSender().sendString(12743, "Don't worry, it'll be all over in a moment!");
-				player.getActionSender().sendInterfaceAnimation(12744, 588);
-				player.getActionSender().sendNpcHead(12744, 1837);			
+				ActionSender.sendString(player, 12742, "Dondakan the Dwarf");
+				ActionSender.sendString(player, 12743, "Don't worry, it'll be all over in a moment!");
+				ActionSender.sendInterfaceAnimation(player, 12744, 588);
+				ActionSender.sendNpcHead(player, 12744, 1837);			
 				
-				player.getActionSender().sendString(12745, "Something goes here.");
-				player.getActionSender().sendInterfaceAnimation(12740, 600);
-				player.getActionSender().sendPlayerHead(12740);
-				player.getActionSender().sendInterface(12737);
+				ActionSender.sendString(player, 12745, "Something goes here.");
+				ActionSender.sendInterfaceAnimation(player, 12740, 600);
+				ActionSender.sendPlayerHead(player, 12740);
+				ActionSender.sendInterface(player, 12737);
 			}  else if (command.equals("npch")) {
-				player.getActionSender().sendString(4884, "King Black Dragon");
-				player.getActionSender().sendString(4885, "I think this text box works.");
-				player.getActionSender().sendInterfaceAnimation(4883, 588);
-				player.getActionSender().sendNpcHead(4883, 2642);
-				player.getActionSender().sendChatBoxInterface(4882);
+				ActionSender.sendString(player, 4884, "King Black Dragon");
+				ActionSender.sendString(player, 4885, "I think this text box works.");
+				ActionSender.sendInterfaceAnimation(player, 4883, 588);
+				ActionSender.sendNpcHead(player, 4883, 2642);
+				ActionSender.sendChatBoxInterface(player, 4882);
 			} else if(command.equals("max")) {
 				for(int i = 0; i <= Skills.SKILL_COUNT; i++) {
 					player.getSkills().setLevel(i, 99);
@@ -146,18 +147,18 @@ public class CommandPacketHandler implements PacketHandler {
 				}
 			} else if(command.startsWith("empty")) {
 				player.getInventory().clear();
-				player.getActionSender().sendMessage("Your inventory has been emptied.");
+				ActionSender.sendMessage(player, "Your inventory has been emptied.");
 			} else if(command.equals("config")) {
 				int id = Integer.parseInt(args[1]);
 				int id2 = Integer.parseInt(args[2]);
-				player.getActionSender().sendConfig(id, id2);
+				ActionSender.sendConfig(player, id, id2);
 			} else if(command.startsWith("cl")) {
 				World.getWorld().submit(new Event(600) {
 					int configId = 0;
 					@Override
 					public void execute() {
-						player.getActionSender().sendConfig(configId, 15);
-						player.getActionSender().sendMessage("Config " + configId);
+						ActionSender.sendConfig(player, configId, 15);
+						ActionSender.sendMessage(player, "Config " + configId);
 						configId++;
 					}
 					
@@ -166,23 +167,23 @@ public class CommandPacketHandler implements PacketHandler {
 				try {
 					player.getSkills().setLevel(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
 					player.getSkills().setExperience(Integer.parseInt(args[1]), player.getSkills().getXPForLevel(Integer.parseInt(args[2])) + 1);
-					player.getActionSender().sendMessage(Skills.SKILL_NAME[Integer.parseInt(args[1])] + " level is now " + Integer.parseInt(args[2]) + ".");	
+					ActionSender.sendMessage(player, Skills.SKILL_NAME[Integer.parseInt(args[1])] + " level is now " + Integer.parseInt(args[2]) + ".");	
 				} catch(Exception e) {
 					e.printStackTrace();
-					player.getActionSender().sendMessage("Syntax is ::lvl [skill] [lvl].");				
+					ActionSender.sendMessage(player, "Syntax is ::lvl [skill] [lvl].");				
 				}
 			} else if(command.startsWith("skill")) {
 				try {
 					player.getSkills().setLevel(Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-					player.getActionSender().sendMessage(Skills.SKILL_NAME[Integer.parseInt(args[1])] + " level is temporarily boosted to " + Integer.parseInt(args[2]) + ".");	
+					ActionSender.sendMessage(player, Skills.SKILL_NAME[Integer.parseInt(args[1])] + " level is temporarily boosted to " + Integer.parseInt(args[2]) + ".");	
 				} catch(Exception e) {
 					e.printStackTrace();
-					player.getActionSender().sendMessage("Syntax is ::skill [skill] [lvl].");				
+					ActionSender.sendMessage(player, "Syntax is ::skill [skill] [lvl].");				
 				}
 			} else if(command.startsWith("enablepvp")) {
 				try {
 					player.updatePlayerAttackOptions(true);
-					player.getActionSender().sendMessage("PvP combat enabled.");
+					ActionSender.sendMessage(player, "PvP combat enabled.");
 				} catch(Exception e) {
 					
 				}
@@ -220,13 +221,13 @@ public class CommandPacketHandler implements PacketHandler {
 				TileMapBuilder bldr = new TileMapBuilder(player.getLocation(), radius);
 				TileMap map = bldr.build();
 				Tile t = map.getTile(0, 0);
-				player.getActionSender().sendMessage("N: " + t.isNorthernTraversalPermitted() +
+				ActionSender.sendMessage(player, "N: " + t.isNorthernTraversalPermitted() +
 					" E: " + t.isEasternTraversalPermitted() +
 					" S: " + t.isSouthernTraversalPermitted() +
 					" W: " + t.isWesternTraversalPermitted());
 			}
 		} catch(Exception ex) {
-			player.getActionSender().sendMessage("Error while processing command.");
+			ActionSender.sendMessage(player, "Error while processing command.");
 		}
 	}
 

@@ -108,11 +108,7 @@ public class Player extends Entity implements Persistable {
 	 * The ISAAC cipher for outgoing data.
 	 */
 	private final ISAACCipher outCipher;
-	
-	/**
-	 * The action sender.
-	 */
-	private final ActionSender actionSender = new ActionSender(this);
+
 	
 	/**
 	 * A queue of pending chat messages.
@@ -393,14 +389,6 @@ public class Player extends Entity implements Persistable {
 	}
 	
 	/**
-	 * Gets the action sender.
-	 * @return The action sender.
-	 */
-	public ActionSender getActionSender() {
-		return actionSender;
-	}
-	
-	/**
 	 * Gets the incoming ISAAC cipher.
 	 * @return The incoming ISAAC cipher.
 	 */
@@ -493,7 +481,7 @@ public class Player extends Entity implements Persistable {
 	 */
 	public void setRunEnergy(double runEnergy) {
 		this.runEnergy = runEnergy;
-		this.getActionSender().sendRunEnergy();
+		ActionSender.sendRunEnergy(this);
 	}
 	
 	@Override
@@ -542,7 +530,7 @@ public class Player extends Entity implements Persistable {
 	 */
 	public void updatePlayerAttackOptions(boolean enable) {
 		if(enable) {
-			actionSender.sendInteractionOption("Attack", 1, true);
+			ActionSender.sendInteractionOption(this, "Attack", 1, true);
 			//actionSender.sendOverlay(381);
 		} else {
 			

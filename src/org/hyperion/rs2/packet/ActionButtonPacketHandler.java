@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.hyperion.rs2.model.Animation;
 import org.hyperion.rs2.model.Player;
+import org.hyperion.rs2.net.ActionSender;
 import org.hyperion.rs2.net.Packet;
 
 /**
@@ -117,7 +118,7 @@ public class ActionButtonPacketHandler implements PacketHandler {
 			player.playAnimation(Animation.GLASS_WALL);
 			break;
 		case 2458:
-			player.getActionSender().sendLogout();
+			ActionSender.sendLogout(player);
 			break;
 		case 5387:
 			player.getSettings().setWithdrawAsNotes(false);
@@ -132,7 +133,7 @@ public class ActionButtonPacketHandler implements PacketHandler {
 			player.getSettings().setSwapping(false);
 			break;
 		case 3651:
-			player.getActionSender().sendCloseInterfaces();
+			ActionSender.sendCloseInterfaces(player);
 			break;
 		default:
 			logger.info("Unhandled action button : " + button);

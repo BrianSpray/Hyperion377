@@ -6,6 +6,7 @@ import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.ItemDefinition;
 import org.hyperion.rs2.model.Location;
 import org.hyperion.rs2.model.Player;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * <p>A harvesting action is a resource-gathering action, which includes, but
@@ -118,7 +119,7 @@ public abstract class HarvestingAction extends Action {
 	private void giveRewards(Player player, Item reward) {
 		player.getInventory().add(reward);
 		ItemDefinition def = reward.getDefinition();
-		player.getActionSender().sendMessage("You get some " + def.getName() + ".");
+		ActionSender.sendMessage(player, "You get some " + def.getName() + ".");
 		player.getSkills().addExperience(getSkill(), getExperience());
 	}
 
@@ -145,7 +146,7 @@ public abstract class HarvestingAction extends Action {
 				}
 			} else {
 				stop();
-				player.getActionSender().sendMessage("There is not enough space in your inventory.");
+				ActionSender.sendMessage(player, "There is not enough space in your inventory.");
 				return;
 			}
 			if(cycles == 0) {

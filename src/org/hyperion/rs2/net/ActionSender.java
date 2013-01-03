@@ -24,61 +24,49 @@ import org.hyperion.rs2.net.Packet.Type;
 public class ActionSender {
 	
 	/**
-	 * The player.
-	 */
-	private Player player;
-	
-	/**
-	 * Creates an action sender for the specified player.
-	 * @param player The player to create the action sender for.
-	 */
-	public ActionSender(Player player) {
-		this.player = player;
-	}
-	
-	/**
 	 * Sends all the login packets.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendLogin() {
+	public static void sendLogin(Player player) {
 		player.setActive(true);
-		sendDetails();
-		sendMessage("Welcome to RuneScape.");
+		sendDetails(player);
+		sendMessage(player, "Welcome to RuneScape.");
 		
-		sendRunEnergy();
+		sendRunEnergy(player);
 		
-		sendFriendServer(2); 
+		sendFriendServer(player, 2); 
 		//sendFriendStatus(1); // 1 is World1, -45 is Classic1
 		
 		//sendSynchronizeConfigs();
 		
-		sendMapRegion();
+		sendMapRegion(player);
 		
-		sendGroundItem(Location.create(3222, 3223, 0), 4151, 0, 1);
+		sendGroundItem(player, Location.create(3222, 3223, 0), 4151, 0, 1);
 		
-		sendSidebarInterfaces();
+		sendHintIconLocation(player, 2, 3225, 3222,(byte) 0);
+		sendSidebarInterfaces(player);
 		
 		//sendWelcomeScreen();
 
-		sendWalkableInterface(197);
+		sendWalkableInterface(player, 197);
 		int wildernessLevel = 1 + (player.getLocation().getY() - 3520) / 8;
-		sendString(199, "Level: " + wildernessLevel);		
-		sendMultiWayIcon(1);
+		sendString(player, 199, "Level: " + wildernessLevel);		
+		sendMultiWayIcon(player, 1);
 		
-		sendTextColor(7332, Color.GREEN);
+		sendTextColor(player, 7332, Color.GREEN);
 				
-		sendSetInterfaceHidden(12323, false);
-		sendConfig(300, 100 * 10);
-		sendConfig(301, 0);
+		sendSetInterfaceHidden(player, 12323, false);
+		sendConfig(player, 300, 100 * 10);
+		sendConfig(player, 301, 0);
 
-		sendSetInterfaceHidden(4240, true);
+		sendSetInterfaceHidden(player, 4240, true);
 		Item[] whips = {new Item(1673), new Item(1675), new Item(1677) ,new Item(1679) ,new Item(1681) , new Item(1683), new Item(6579)};
-		sendUpdateItems(4245, whips);
+		sendUpdateItems(player, 4245, whips);
 
 
 		
-		sendInteractionOption("Follow", 3, true);
-		sendInteractionOption("Trade with", 4, true);
+		sendInteractionOption(player, "Follow", 3, true);
+		sendInteractionOption(player, "Trade with", 4, true);
 		
 		InterfaceContainerListener inventoryListener = new InterfaceContainerListener(player, Inventory.INTERFACE);
 		player.getInventory().addListener(inventoryListener);
@@ -88,7 +76,6 @@ public class ActionSender {
 		player.getEquipment().addListener(new EquipmentContainerListener(player));
 		player.getEquipment().addListener(new WeaponContainerListener(player));
 		
-		return this;
 	}
 	
 	/**
@@ -96,7 +83,7 @@ public class ActionSender {
 	 * @param palette The palette of map regions.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendConstructMapRegion(Palette palette) {
+	public static void sendConstructMapRegion(Player player, Palette palette) {
 		player.setLastKnownRegion(player.getLocation());
 		PacketBuilder bldr = new PacketBuilder(53, Type.VARIABLE_SHORT);
 		bldr.putShortA(player.getLocation().getRegionX() + 6);
@@ -115,28 +102,25 @@ public class ActionSender {
 		bldr.finishBitAccess();
 		bldr.putShortA(player.getLocation().getRegionY() + 6);
 		player.write(bldr.toPacket());
-		return this;
 	}
 
 	/**
 	 * Sends the initial login packet (e.g. members, player id).
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendDetails() {
+	public static void sendDetails(Player player) {
 		player.write(new PacketBuilder(126).put((byte) (player.isMembers() ? 1 : 0)).putLEShort(player.getIndex()).toPacket());
 		player.write(new PacketBuilder(148).toPacket());
-		return this;
 	}
 	
 	/**
 	 * Sends the player's skills.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendSkills() {
+	public static void sendSkills(Player player) {
 		for(int i = 0; i < Skills.SKILL_COUNT; i++) {
-			sendSkill(i);
+			sendSkill(player, i);
 		}
-		return this;
 	}
 	
 	/**
@@ -144,30 +128,27 @@ public class ActionSender {
 	 * @param skill The skill to send.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendSkill(int skill) {
+	public static void sendSkill(Player player, int skill) {
 		PacketBuilder bldr = new PacketBuilder(49);
 		bldr.putByteC((byte) skill);
 		bldr.put((byte) player.getSkills().getLevel(skill));
 		bldr.putInt((int) player.getSkills().getExperience(skill));
 		player.write(bldr.toPacket());
-		return this;
 	}
 
-	public ActionSender sendSidebarIconFlash(int sideBar) {
+	public static void sendSidebarIconFlash(Player player, int sideBar) {
 		player.getSession().write(new PacketBuilder(238).put((byte) sideBar).toPacket());
-		return this;
 	}
 	/**
 	 * Sends all the sidebar interfaces.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendSidebarInterfaces() {
+	public static void sendSidebarInterfaces(Player player) {
 		final int[] icons = Constants.SIDEBAR_INTERFACES[0];
 		final int[] interfaces = Constants.SIDEBAR_INTERFACES[1];
 		for(int i = 0; i < icons.length; i++) {
-			sendSidebarInterface(icons[i], interfaces[i]);
+			sendSidebarInterface(player, icons[i], interfaces[i]);
 		}
-		return this;
 	}
 	
 	/**
@@ -176,23 +157,20 @@ public class ActionSender {
 	 * @param interfaceId The interface id.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendSidebarInterface(int icon, int interfaceId) {
+	public static void sendSidebarInterface(Player player, int icon, int interfaceId) {
 		player.write(new PacketBuilder(10).putByteS((byte) icon).putShortA(interfaceId).toPacket());
-		return this;
 	}
 	
-	public ActionSender sendInterface(int interfaceId) {
+	public static void sendInterface(Player player, int interfaceId) {
 	    PacketBuilder packet = new PacketBuilder(159);
 	    packet.putLEShortA(interfaceId);
 	    player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendChatBoxInterface(int interfaceId) {
+	public static void sendChatBoxInterface(Player player, int interfaceId) {
 	    PacketBuilder packet = new PacketBuilder(109);
 	    packet.putShort(interfaceId);
 	    player.write(packet.toPacket());
-		return this;
 	}		
 	
 	/**
@@ -201,42 +179,37 @@ public class ActionSender {
 	 * @param inventoryInterfaceId The inventory interface id.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendInterfaceInventory(int interfaceId, int inventoryInterfaceId) {
+	public static void sendInterfaceInventory(Player player, int interfaceId, int inventoryInterfaceId) {
 		player.getInterfaceState().interfaceOpened(interfaceId);
 		player.write(new PacketBuilder(128).putShortA(interfaceId).putLEShortA(inventoryInterfaceId).toPacket());
-		return this;
 	}
 	
 	/**
 	 * Does not close when walking, or opening another interface
 	 * For Tutorial Island, I'm assuming.
 	 */
-	public ActionSender sendDialogueInterface(int interfaceId) {
+	public static void sendDialogueInterface(Player player, int interfaceId) {
 		player.getSession().write(new PacketBuilder(158).putLEShort(interfaceId).toPacket());
-		return this;
 	}	
 	
-	public ActionSender sendPlayerHead(int interfaceId) {
+	public static void sendPlayerHead(Player player, int interfaceId) {
 		PacketBuilder packet = new PacketBuilder(255);
 		packet.putLEShortA(interfaceId);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendNpcHead(int interfaceId, int npcId) {
+	public static void sendNpcHead(Player player, int interfaceId, int npcId) {
 		PacketBuilder packet = new PacketBuilder(162);
 		packet.putShortA(npcId);
 		packet.putLEShort(interfaceId);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendInterfaceAnimation(int interfaceId, int animationId) {
+	public static void sendInterfaceAnimation(Player player, int interfaceId, int animationId) {
 		PacketBuilder packet = new PacketBuilder(2);
 		packet.putLEShortA(interfaceId);
 		packet.putShortA(animationId);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
 	/*
@@ -244,27 +217,23 @@ public class ActionSender {
 	 * Wildy Icon Correct place = 197
 	 * Duel Arena Icon = 201
 	 */
-	public ActionSender sendWalkableInterface(int interfaceId) {
+	public static void sendWalkableInterface(Player player, int interfaceId) {
 		player.getSession().write(new PacketBuilder(50).putShort(interfaceId).toPacket());
-		return this;
 	}
 	
-	public ActionSender sendFullScreenInterface(int interfaceId, int interfaceId2) {
+	public static void sendFullScreenInterface(Player player, int interfaceId, int interfaceId2) {
 		player.getSession().write(new PacketBuilder(253).putLEShort(interfaceId).putShortA(interfaceId2).toPacket());
-		return this;
 	}
 	
-	public ActionSender sendCloseInterfaces() {
+	public static void sendCloseInterfaces(Player player) {
 	    player.write(new PacketBuilder(29).toPacket());
-	    return this;
 	}
 	
-	public ActionSender sendSetInterfaceHidden(int id, boolean value) {
+	public static void sendSetInterfaceHidden(Player player, int id, boolean value) {
 		PacketBuilder bldr = new PacketBuilder(82);
 		bldr.put((byte)(value ? 1 : 0));
 		bldr.putShort(id);
 		player.getSession().write(bldr.toPacket());
-		return this;
 	}
 	
 	/**
@@ -272,28 +241,25 @@ public class ActionSender {
 	 * @param message The message to send.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendMessage(String message) {
+	public static void sendMessage(Player player, String message) {
 		player.write(new PacketBuilder(63, Type.VARIABLE).putRS2String(message).toPacket());
-		return this;
 	}
 	
 	/**
 	 * Sends the map region load command.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendMapRegion() {
+	public static void sendMapRegion(Player player) {
 		player.setLastKnownRegion(player.getLocation());
 		player.write(new PacketBuilder(222).putShort(player.getLocation().getRegionY() + 6).putLEShortA(player.getLocation().getRegionX() + 6).toPacket());
-		return this;
 	}
 	
 	/**
 	 * Sends the logout packet.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendLogout() {
+	public static void sendLogout(Player player) {
 		player.write(new PacketBuilder(5).toPacket()); // TODO IoFuture
-		return this;
 	}
 	
 
@@ -306,7 +272,7 @@ public class ActionSender {
 	 *            The items.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendUpdateItems(int interfaceId, Item[] items) {
+	public static void sendUpdateItems(Player player, int interfaceId, Item[] items) {
 		PacketBuilder bldr = new PacketBuilder(206, Type.VARIABLE_SHORT);
 		bldr.putShort(interfaceId);
 		bldr.putShort(items.length);
@@ -326,10 +292,9 @@ public class ActionSender {
 			}
 		}
 		player.write(bldr.toPacket());
-		return this;
 	}
 
-	public ActionSender sendUpdateItem(int interfaceId, int slot, Item item) {
+	public static void sendUpdateItem(Player player, int interfaceId, int slot, Item item) {
 		PacketBuilder bldr = new PacketBuilder(134, Type.VARIABLE_SHORT);
 		bldr.putShort(interfaceId).putSmart(slot);
 		if (item != null) {
@@ -346,10 +311,9 @@ public class ActionSender {
 			bldr.put((byte) 0);
 		}
 		player.write(bldr.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendUpdateItems(int interfaceId, int[] slots,
+	public static void sendUpdateItems(Player player, int interfaceId, int[] slots,
 			Item[] items) {
 		PacketBuilder bldr = new PacketBuilder(134, Type.VARIABLE_SHORT)
 				.putShort(interfaceId);
@@ -371,16 +335,14 @@ public class ActionSender {
 			}
 		}
 		player.write(bldr.toPacket());
-		return this;
 	}
 
 	/**
 	 * Sends the enter amount interface.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendEnterAmountInterface() {
+	public static void sendEnterAmountInterface(Player player) {
 		player.write(new PacketBuilder(58).toPacket());
-		return this;
 	}
 	
 	/**
@@ -389,13 +351,12 @@ public class ActionSender {
 	 * @param top Flag which indicates the item should be placed at the top.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendInteractionOption(String option, int slot, boolean top) {
+	public static void sendInteractionOption(Player player, String option, int slot, boolean top) {
 		PacketBuilder bldr = new PacketBuilder(157, Type.VARIABLE);
 		bldr.putByteC((byte) slot);
 		bldr.putRS2String(option);
 		bldr.put(top ? (byte) 0 : (byte) 1);
 		player.write(bldr.toPacket());
-		return this;
 	}
 
 	/**
@@ -404,12 +365,11 @@ public class ActionSender {
 	 * @param string The string.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendString(int id, String string) {
+	public static void sendString(Player player, int id, String string) {
 		PacketBuilder bldr = new PacketBuilder(232, Type.VARIABLE_SHORT);
 		bldr.putLEShortA(id);
 		bldr.putRS2String(string);
 		player.write(bldr.toPacket());
-		return this;
 	}
 	
 	/**
@@ -419,14 +379,13 @@ public class ActionSender {
 	 * @param model The model id.
 	 * @return The action sender instance, for chaining.
 	 */
-	public ActionSender sendInterfaceModel(int id, int zoom, int model) {
+	public static void sendInterfaceModel(Player player, int id, int zoom, int model) {
 		PacketBuilder bldr = new PacketBuilder(21);
 		bldr.putShort(zoom).putLEShort(model).putLEShortA(id);
 		player.write(bldr.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendTextColor(int childId, Color colour) {
+	public static void sendTextColor(Player player, int childId, Color colour) {
 	      int r = (colour.getRed() >> 3) & 0x1F;
 	      int g = (colour.getGreen() >> 3) & 0x1F;
 	      int b = (colour.getBlue() >> 3) & 0x1F;
@@ -434,17 +393,15 @@ public class ActionSender {
 	      packet.putShort(childId);   
 	      packet.putShortA((r << 10) | (g << 5) | b);
 	      player.write(packet.toPacket());
-	      return this;
 	}
 	
-	public ActionSender sendFriendServer(int status) {
+	public static void sendFriendServer(Player player, int status) {
 	    PacketBuilder packet = new PacketBuilder(251);
 	    packet.put((byte) status);
 	    player.write(packet.toPacket());
-	    return this;
 	}
 	
-	public ActionSender sendFriendStatus(long name, int worldId) {
+	public static void sendFriendStatus(Player player, long name, int worldId) {
 		PacketBuilder packet = new PacketBuilder(78);
 		if (worldId != 0) {
 			worldId += 9;
@@ -452,22 +409,19 @@ public class ActionSender {
 		packet.putLong(name);
 		packet.put((byte) (worldId));
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendPrivateMessage(long name, int rights, byte[] message, int messageSize) {
+	public static void sendPrivateMessage(Player player, long name, int rights, byte[] message, int messageSize) {
 		PacketBuilder packet = new PacketBuilder(135);
 		packet.putLong(name);
 		//packet.putLEInt(player.getPrivateMessage().getLastMessageIndex());
 		packet.put((byte) rights);
 		packet.put(message, 0, messageSize);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendRunEnergy() {
+	public static void sendRunEnergy(Player player) {
 		player.getSession().write(new PacketBuilder(125).put((byte) player.getRunEnergy()).toPacket());
-		return this;
 	}
 	
 	/**
@@ -480,22 +434,19 @@ public class ActionSender {
 	*  If <code>time</code> is 200, then it will count
 	*  down from 2:00. Get it? Good!
 	*/
-	public ActionSender sendSystemUpdate(int time) {
+	public static void sendSystemUpdate(Player player, int time) {
 		player.getSession().write(new PacketBuilder(190).putLEShort(time).toPacket());
-		return this;
 	}
 	
-	public ActionSender sendMiniMapState(int state) {
+	public static void sendMiniMapState(Player player, int state) {
 		player.getSession().write(new PacketBuilder(156).put((byte) state).toPacket());
-		return this;
 	}	
 
-	public ActionSender sendMultiWayIcon(int state) {
+	public static void sendMultiWayIcon(Player player, int state) {
 	    player.write(new PacketBuilder(233).put((byte) state).toPacket());
-	    return this;
 	}
 	
-	public ActionSender sendWelcomeScreen() {
+	public static void sendWelcomeScreen(Player player) {
 		PacketBuilder packet = new PacketBuilder(76);
 		packet.putLEShort(0);
 		packet.putLEShortA(0);
@@ -508,93 +459,83 @@ public class ActionSender {
 		packet.putLEInt(0);
 		packet.putLEShort(0);
 		packet.putByteS((byte) 0);
-		sendFullScreenInterface(5993, 15244);
+		sendFullScreenInterface(player, 5993, 15244);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendGroundItem(Location location, int itemId, int offset, int itemAmount) {
+	public static void sendGroundItem(Player player, Location location, int itemId, int offset, int itemAmount) {
 		PacketBuilder packet = new PacketBuilder(107);
-		sendSetCurrentPlacement(location);
+		sendSetCurrentPlacement(player, location);
 		packet.putShort(itemId);
 		packet.putByteC(offset);
 		packet.putShortA(itemAmount);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
 	/**
 	 * Sends the Current placement in an 8x8 region
 	 * @return
 	 */
-	public ActionSender sendSetCurrentLocalPlacement(Location location) {
+	public static void sendSetCurrentLocalPlacement(Player player, Location location) {
 		PacketBuilder packet = new PacketBuilder(75);
 		packet.putByteC(location.getLocalX());
 		packet.putByteA(location.getLocalY());
 		player.write(packet.toPacket());
-		return this;
 	}
 	
 	/**
 	 * Sends the Current placement in an 8x8 region
 	 * @return
 	 */
-	public ActionSender sendSetCurrentPlacement(Location location) {
+	public static void sendSetCurrentPlacement(Player player, Location location) {
 		PacketBuilder packet = new PacketBuilder(75);
 		packet.putByteC(location.getX() - (player.getLastKnownRegion().getRegionX() * 8));
 		packet.putByteA(location.getY() - (player.getLastKnownRegion().getRegionY() * 8));
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendSetCurrentEntityPlacement(Location location) {
+	public static void sendSetCurrentEntityPlacement(Player player, Location location) {
 		PacketBuilder packet = new PacketBuilder(183);
 		packet.put((byte) (location.getX() - (player.getLastKnownRegion().getRegionX())));
 		packet.putByteA(location.getY() - (player.getLastKnownRegion().getRegionY()));
-		player.write(packet.toPacket());
-		return this;		
+		player.write(packet.toPacket());		
 	}
 	
-	public ActionSender sendConfig(int id, int value) {
+	public static void sendConfig(Player player, int id, int value) {
 		if (value < 255) {
-			sendConfig1(id, value);
+			sendConfig1(player, id, value);
 		} else {
-			sendConfig2(id, value);
+			sendConfig2(player, id, value);
 		}
-		return this;
 	}
 	
-	public ActionSender sendConfig1(int id, int value) {
+	public static void sendConfig1(Player player, int id, int value) {
 		System.out.println("config 1 value = "+value);
 		PacketBuilder bldr = new PacketBuilder(182);
 		bldr.putShortA(id);
 		bldr.putByteS((byte) value);
 		player.getSession().write(bldr.toPacket());
-		return this;
 	}
 	
 	
-	public ActionSender sendConfig2(int settingId, int settingState) {
+	public static void sendConfig2(Player player, int settingId, int settingState) {
 		PacketBuilder packet = new PacketBuilder(115);
 		packet.putInt2(settingState);
 		packet.putLEShort(settingId);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendSynchronizeConfigs() {
+	public static void sendSynchronizeConfigs(Player player) {
 		player.write(new PacketBuilder(113).toPacket()); 
-		return this;
 	}
 	
-	public ActionSender sendHintIconNPC(int index) {
+	public static void sendHintIconNPC(Player player, int index) {
 		PacketBuilder packet = new PacketBuilder(199);
 		packet.put((byte) 1);
 		packet.putShort(index);
 		packet.putShort(0);
 		packet.put((byte) 0);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
 	/**
@@ -602,48 +543,57 @@ public class ActionSender {
 	 * @param type: 2 centered, 3 west, 4 east, 5 south, 6 north
 	 * @param xCoord
 	 * @param yCoord
-	 * @param zCoord
+	 * @param zCoord, 128 for it to be positioned above wall height
 	 * @return
 	 */
 	
-	public ActionSender sendHintIconLocation(int type, int xCoord, int yCoord, byte zCoord) {
+	public static void sendHintIconLocation(Player player, int type, int xCoord, int yCoord, byte zCoord) {
 		PacketBuilder packet = new PacketBuilder(199);
 		packet.put((byte) type);
 		packet.putShort(xCoord);
 		packet.putShort(yCoord);
 		packet.put(zCoord);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendHintIconPlayer(int index) {
+	public static void sendHintIconPlayer(Player player, int index) {
 		PacketBuilder packet = new PacketBuilder(199);
 		packet.put((byte) 10);
 		packet.putShort(index);
 		packet.putShort(0);
 		packet.put((byte) 0);
 		player.write(packet.toPacket());
-		return this;
 	}
 	
-	public ActionSender sendObjectAnimation(Location location, int animationId, int objectType, int orientation) {
-		PacketBuilder packet = new PacketBuilder(142);
-		player.getActionSender().sendSetCurrentPlacement(location);
-		packet.putShort(animationId);
-		packet.putByteA((byte) ((objectType << 2) + (orientation & 3)));
-		packet.put((byte) 0);
-		player.write(packet.toPacket());
-		return this;
+	public static void sendObjectAnimation(Player player, int objectX, int objectY, int animationId, int objectType, int orientation) {
+		for (Player players : player.getRegion().getPlayers()) {
+			PacketBuilder packet = new PacketBuilder(142);
+			sendSetCurrentPlacement(player, Location.create(objectX, objectY, players.getLocation().getZ()));
+			packet.putShort(animationId);
+			packet.putByteA((byte) ((objectType << 2) + (orientation & 3)));
+			packet.put((byte) 0);
+			players.write(packet.toPacket());
+		}
 	}
 	
-	public ActionSender sendAddObject(Location location, int objectId, int objectType, int orientation) {
+	public static void sendAddObject(Player player, Location location, int objectId, int objectType, int orientation) {
 		PacketBuilder packet = new PacketBuilder(152);
-		sendSetCurrentPlacement(location);
+		sendSetCurrentPlacement(player, location);
 		packet.putByteC((byte) (objectType << 2) + (orientation & 3));
 		packet.putLEShortA(objectId);
 		packet.putByteA((byte) 0);
 		player.write(packet.toPacket());
-		return this;
+	}
+	
+	public static void sendAddGlobalObject(Player player, Location location, int objectId, int objectType, int orientation) {
+		for (Player players : player.getRegion().getPlayers()) {
+			PacketBuilder packet = new PacketBuilder(152);
+			sendSetCurrentPlacement(player, location);
+			packet.putByteC((byte) (objectType << 2) + (orientation & 3));
+			packet.putLEShortA(objectId);
+			packet.putByteA((byte) 0);
+			players.write(packet.toPacket());
+		}
 	}
 	
 }

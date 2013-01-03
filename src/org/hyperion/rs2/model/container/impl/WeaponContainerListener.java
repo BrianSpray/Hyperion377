@@ -5,6 +5,7 @@ import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.container.Container;
 import org.hyperion.rs2.model.container.ContainerListener;
 import org.hyperion.rs2.model.container.Equipment;
+import org.hyperion.rs2.net.ActionSender;
 
 /**
  * A listener which updates the weapon tab.
@@ -73,52 +74,52 @@ public class WeaponContainerListener implements ContainerListener {
 	 */
 	private void sendWeapon(int id, String name, String genericName) {
 		if(name.equals("Unarmed")) {
-			player.getActionSender().sendSidebarInterface(0, 5855);
-			player.getActionSender().sendString(5857, name);
+			ActionSender.sendSidebarInterface(player, 0, 5855);
+			ActionSender.sendString(player, 5857, name);
 		} else if(name.endsWith("whip")) {
-			player.getActionSender().sendSidebarInterface(0, 12290);
-			player.getActionSender().sendInterfaceModel(12291, 200, id);
-			player.getActionSender().sendString(12293, name);
+			ActionSender.sendSidebarInterface(player, 0, 12290);
+			ActionSender.sendInterfaceModel(player, 12291, 200, id);
+			ActionSender.sendString(player, 12293, name);
 		} else if(name.endsWith("Scythe")) {
-			player.getActionSender().sendSidebarInterface(0, 776);
-			player.getActionSender().sendInterfaceModel(777, 200, id);
-			player.getActionSender().sendString(779, name);
+			ActionSender.sendSidebarInterface(player, 0, 776);
+			ActionSender.sendInterfaceModel(player, 777, 200, id);
+			ActionSender.sendString(player, 779, name);
 		} else if(name.endsWith("bow") || name.startsWith("Crystal bow") || name.startsWith("Toktz-xil-ul")) {
-			player.getActionSender().sendSidebarInterface(0, 1764);
-			player.getActionSender().sendInterfaceModel(1765, 200, id);
-			player.getActionSender().sendString(1767, name);
+			ActionSender.sendSidebarInterface(player, 0, 1764);
+			ActionSender.sendInterfaceModel(player, 1765, 200, id);
+			ActionSender.sendString(player, 1767, name);
 		} else if(name.startsWith("Staff") || name.endsWith("staff")) {
-			player.getActionSender().sendSidebarInterface(0, 328);
-			player.getActionSender().sendInterfaceModel(329, 200, id);
-			player.getActionSender().sendString(331, name);
+			ActionSender.sendSidebarInterface(player, 0, 328);
+			ActionSender.sendInterfaceModel(player, 329, 200, id);
+			ActionSender.sendString(player, 331, name);
 		} else if(genericName.startsWith("dart")) {
-			player.getActionSender().sendSidebarInterface(0, 4446);
-			player.getActionSender().sendInterfaceModel(4447, 200, id);
-			player.getActionSender().sendString(4449, name);
+			ActionSender.sendSidebarInterface(player, 0, 4446);
+			ActionSender.sendInterfaceModel(player, 4447, 200, id);
+			ActionSender.sendString(player, 4449, name);
 		} else if(genericName.startsWith("dagger")) {
-			player.getActionSender().sendSidebarInterface(0, 2276);
-			player.getActionSender().sendInterfaceModel(2277, 200, id);
-			player.getActionSender().sendString(2279, name);
+			ActionSender.sendSidebarInterface(player, 0, 2276);
+			ActionSender.sendInterfaceModel(player, 2277, 200, id);
+			ActionSender.sendString(player, 2279, name);
 		} else if(genericName.startsWith("pickaxe")) {
-			player.getActionSender().sendSidebarInterface(0, 5570);
-			player.getActionSender().sendInterfaceModel(5571, 200, id);
-			player.getActionSender().sendString(5573, name);
+			ActionSender.sendSidebarInterface(player, 0, 5570);
+			ActionSender.sendInterfaceModel(player, 5571, 200, id);
+			ActionSender.sendString(player, 5573, name);
 		} else if(genericName.startsWith("axe") || genericName.startsWith("battleaxe")) {
-			player.getActionSender().sendSidebarInterface(0, 1698);
-			player.getActionSender().sendInterfaceModel(1699, 200, id);
-			player.getActionSender().sendString(1701, name);
+			ActionSender.sendSidebarInterface(player, 0, 1698);
+			ActionSender.sendInterfaceModel(player, 1699, 200, id);
+			ActionSender.sendString(player, 1701, name);
 		} else if(genericName.startsWith("Axe") || genericName.startsWith("Battleaxe")) {
-			player.getActionSender().sendSidebarInterface(0, 1698);
-			player.getActionSender().sendInterfaceModel(1699, 200, id);
-			player.getActionSender().sendString(1701, name);
+			ActionSender.sendSidebarInterface(player, 0, 1698);
+			ActionSender.sendInterfaceModel(player, 1699, 200, id);
+			ActionSender.sendString(player, 1701, name);
 		} else if(genericName.startsWith("halberd")) {
-			player.getActionSender().sendSidebarInterface(0, 8460);
-			player.getActionSender().sendInterfaceModel(8461, 200, id);
-			player.getActionSender().sendString(8463, name);
+			ActionSender.sendSidebarInterface(player, 0, 8460);
+			ActionSender.sendInterfaceModel(player, 8461, 200, id);
+			ActionSender.sendString(player, 8463, name);
 		} else {
-			player.getActionSender().sendSidebarInterface(0, 2423);
-			player.getActionSender().sendInterfaceModel(2424, 200, id);
-			player.getActionSender().sendString(2426, name);
+			ActionSender.sendSidebarInterface(player, 0, 2423);
+			ActionSender.sendInterfaceModel(player, 2424, 200, id);
+			ActionSender.sendString(player, 2426, name);
 		}
 	}
 

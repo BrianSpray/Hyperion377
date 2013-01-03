@@ -15,6 +15,7 @@ import org.hyperion.rs2.model.UpdateFlags.UpdateFlag;
 import org.hyperion.rs2.model.container.Container;
 import org.hyperion.rs2.model.container.Equipment;
 import org.hyperion.rs2.model.container.Equipment.EquipmentType;
+import org.hyperion.rs2.net.ActionSender;
 import org.hyperion.rs2.net.Packet;
 import org.hyperion.rs2.net.PacketBuilder;
 import org.hyperion.rs2.task.Task;
@@ -42,7 +43,7 @@ public class PlayerUpdateTask implements Task {
 	@Override
 	public void execute(GameEngine context) {
 		if(player.isMapRegionChanging()) {
-			player.getActionSender().sendMapRegion();
+			ActionSender.sendMapRegion(player);
 		}
 		PacketBuilder updateBlock = new PacketBuilder();
 		PacketBuilder packet = new PacketBuilder(90, Packet.Type.VARIABLE_SHORT);

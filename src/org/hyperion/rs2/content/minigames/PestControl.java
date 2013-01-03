@@ -2,6 +2,7 @@ package org.hyperion.rs2.content.minigames;
 
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
+import org.hyperion.rs2.net.ActionSender;
 
 public class PestControl {
 	
@@ -14,14 +15,14 @@ public class PestControl {
 	}
 	
 	public static void sendPestControlRewardsInterface(Player player) {
-		player.getActionSender().sendString(18767, "Attack - " + receivedXp(player, Skills.ATTACK) + " xp");		
-		player.getActionSender().sendString(18768, "Strength - " + receivedXp(player, Skills.STRENGTH) + " xp");
-		player.getActionSender().sendString(18769, "Defence - " + receivedXp(player, Skills.DEFENCE) + " xp");
-		player.getActionSender().sendString(18770, "Ranged - " + receivedXp(player, Skills.RANGE) + " xp");
-		player.getActionSender().sendString(18771, "Magic - " + receivedXp(player, Skills.MAGIC) + " xp");
-		player.getActionSender().sendString(18772, "Hitpoints - " + receivedXp(player, Skills.HITPOINTS) + " xp");
-		player.getActionSender().sendString(18773, "Prayer - " + receivedXp(player, Skills.PRAYER) + " xp");
-		player.getActionSender().sendInterface(18691);
+		ActionSender.sendString(player, 18767, "Attack - " + receivedXp(player, Skills.ATTACK) + " xp");		
+		ActionSender.sendString(player, 18768, "Strength - " + receivedXp(player, Skills.STRENGTH) + " xp");
+		ActionSender.sendString(player, 18769, "Defence - " + receivedXp(player, Skills.DEFENCE) + " xp");
+		ActionSender.sendString(player, 18770, "Ranged - " + receivedXp(player, Skills.RANGE) + " xp");
+		ActionSender.sendString(player, 18771, "Magic - " + receivedXp(player, Skills.MAGIC) + " xp");
+		ActionSender.sendString(player, 18772, "Hitpoints - " + receivedXp(player, Skills.HITPOINTS) + " xp");
+		ActionSender.sendString(player, 18773, "Prayer - " + receivedXp(player, Skills.PRAYER) + " xp");
+		ActionSender.sendInterface(player, 18691);
 	}
 	
 }

@@ -194,6 +194,7 @@ public class Combat {
 		}
 		if (aggressor instanceof Player) {
 			((Player) aggressor).getSkills().addExperience(Skills.ATTACK /*getAttackStyle*/, damage.getDamage() * 4);
+			((Player) aggressor).getSkills().addExperience(Skills.HITPOINTS /*getAttackStyle*/, damage.getDamage() * 1.33);
 		}
 	}
 	
@@ -215,7 +216,7 @@ public class Combat {
 			}
 		} else if(victim instanceof NPC) {
 			NPC v = (NPC) victim;
-			verdict = 10;
+			verdict = 1;
 			if(verdict >= v.getHealth()) {
 				verdict = v.getHealth();
 			}
@@ -239,7 +240,7 @@ public class Combat {
 			}
 		} else if(victim instanceof NPC) {
 			NPC v = (NPC) victim;
-			verdict = 10;
+			verdict = 1;
 			if(verdict >= v.getHealth()) {
 				verdict = v.getHealth();
 			}
