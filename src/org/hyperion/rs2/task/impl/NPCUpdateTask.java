@@ -6,6 +6,7 @@ import org.hyperion.rs2.GameEngine;
 import org.hyperion.rs2.model.Entity;
 import org.hyperion.rs2.model.Location;
 import org.hyperion.rs2.model.NPC;
+import org.hyperion.rs2.model.NPCDefinition;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.UpdateFlags;
 import org.hyperion.rs2.model.World;
@@ -213,7 +214,7 @@ public class NPCUpdateTask implements Task {
 		packet.put((byte) mask);
 		
 		if(flags.get(UpdateFlag.TRANSFORM)) {
-			// Byte
+			packet.putShortA(npc.getTransformInto());
 		}
 		if(flags.get(UpdateFlag.FACE_ENTITY)) {
 			Entity entity = npc.getInteractingEntity();
@@ -230,7 +231,7 @@ public class NPCUpdateTask implements Task {
 			packet.putLEInt(npc.getCurrentGraphic().getDelay());
 		}
 		if(flags.get(UpdateFlag.FORCED_CHAT)) {
-			packet.putRS2String(""); // npc.getForcedChat(); etc...
+			packet.putRS2String(npc.getForcedChat());
 		}
 		if(flags.get(UpdateFlag.FACE_COORDINATE)) {
 			Location loc = npc.getFaceLocation();

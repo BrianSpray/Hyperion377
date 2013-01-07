@@ -19,6 +19,7 @@ import org.hyperion.rs2.event.Event;
 import org.hyperion.rs2.event.EventManager;
 import org.hyperion.rs2.event.impl.CleanupEvent;
 import org.hyperion.rs2.event.impl.UpdateEvent;
+import org.hyperion.rs2.handler.HandlerManager;
 import org.hyperion.rs2.login.LoginServerConnector;
 import org.hyperion.rs2.login.LoginServerWorldLoader;
 import org.hyperion.rs2.model.region.RegionManager;
@@ -152,13 +153,10 @@ public class World {
 	 * Initialises the world: loading configuration and registering global
 	 * events.
 	 * @param engine The engine processing this world's tasks.
-	 * @throws IOException if an I/O error occurs loading configuration.
-	 * @throws ClassNotFoundException if a class loaded through reflection was not found.
-	 * @throws IllegalAccessException if a class could not be accessed.
-	 * @throws InstantiationException if a class could not be created.
+	 * @throws Throwable 
 	 * @throws IllegalStateException if the world is already initialised.
 	 */
-	public void init(GameEngine engine) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public void init(GameEngine engine) throws Throwable {
 		if(this.engine != null) {
 			throw new IllegalStateException("The world has already been initialised.");
 		} else {
@@ -166,6 +164,8 @@ public class World {
 			this.eventManager = new EventManager(engine);
 			this.registerGlobalEvents();
 			this.loadConfiguration();
+			HandlerManager.init();
+			HandlerManager.handleInitiation();
 		}
 	}
 	

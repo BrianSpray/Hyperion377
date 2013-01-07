@@ -34,7 +34,7 @@ public class AttackAction extends Action {
 	 * @param type The type of attack.
 	 */
 	public AttackAction(Player player, Entity victim) {
-		super(player, 300);
+		super(player, 600);
 		this.victim = victim;
 	}
 

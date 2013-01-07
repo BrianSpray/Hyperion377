@@ -48,18 +48,22 @@ public class ActionSender {
 		
 		//sendWelcomeScreen();
 
-		sendWalkableInterface(player, 197);
-		int wildernessLevel = 1 + (player.getLocation().getY() - 3520) / 8;
-		sendString(player, 199, "Level: " + wildernessLevel);		
-		sendMultiWayIcon(player, 1);
+		//sendWalkableInterface(player, 197);
+		int ycoord = player.getLocation().getY();
+		if (ycoord > 6400) {
+			ycoord -= 6400;
+		}
+		int wildernessLevel = 1 + (ycoord - 3520) / 8;
+		//sendString(player, 199, "Level: " + wildernessLevel);		
+		//sendMultiWayIcon(player, 1);
 		
 		sendTextColor(player, 7332, Color.GREEN);
 				
-		sendSetInterfaceHidden(player, 12323, false);
+		sendInterfaceConfig(player, 12323, false);
 		sendConfig(player, 300, 100 * 10);
 		sendConfig(player, 301, 0);
 
-		sendSetInterfaceHidden(player, 4240, true);
+		sendInterfaceConfig(player, 4240, true);
 		Item[] whips = {new Item(1673), new Item(1675), new Item(1677) ,new Item(1679) ,new Item(1681) , new Item(1683), new Item(6579)};
 		sendUpdateItems(player, 4245, whips);
 
@@ -229,7 +233,7 @@ public class ActionSender {
 	    player.write(new PacketBuilder(29).toPacket());
 	}
 	
-	public static void sendSetInterfaceHidden(Player player, int id, boolean value) {
+	public static void sendInterfaceConfig(Player player, int id, boolean value) {
 		PacketBuilder bldr = new PacketBuilder(82);
 		bldr.put((byte)(value ? 1 : 0));
 		bldr.putShort(id);
@@ -594,6 +598,30 @@ public class ActionSender {
 			packet.putByteA((byte) 0);
 			players.write(packet.toPacket());
 		}
+	}
+	
+	public static void sendProjectile(Player player, Location start, Location finish, int id, int delay, int angle, int speed,
+			int startHeight, int endHeight, int lockon, int slope, int radius) {
+		int offsetX = (start.getX() - finish.getX()) * -1;
+		int offsetY = (start.getY() - finish.getY()) * -1;
+		PacketBuilder packet = new PacketBuilder(75);
+		packet.putByteC((start.getX() - (player.getLastKnownRegion().getRegionX())));
+		packet.putByteA((start.getY() - (player.getLastKnownRegion().getRegionY())));
+		
+		packet = new PacketBuilder(181);
+		packet.put((byte) angle);
+		packet.put((byte) offsetY);
+		packet.put((byte) offsetX);
+		packet.putShort(lockon);
+		packet.putShort(id);
+		packet.put((byte) startHeight);
+		packet.put((byte) endHeight);
+		packet.putShort(delay);
+		packet.putShort(speed);
+		packet.put((byte) slope);
+		packet.put((byte) radius);
+		
+		player.write(packet.toPacket());
 	}
 	
 }

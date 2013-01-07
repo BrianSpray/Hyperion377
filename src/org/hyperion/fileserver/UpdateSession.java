@@ -8,6 +8,9 @@ import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.session.IoSession;
 
+import org.hyperion.fileserver.Response;
+import org.hyperion.fileserver.Request;
+
 /**
  * Represents a single update session.
  * @author Graham Edgecombe

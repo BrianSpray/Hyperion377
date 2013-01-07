@@ -43,7 +43,7 @@ public class BenchmarkTask implements Task {
 	}
 
 	@Override
-	public void execute(GameEngine context) {
+	public void execute(GameEngine context) throws Throwable {
 		long start = System.nanoTime();
 		task.execute(context);
 		long elapsed = System.nanoTime() - start;

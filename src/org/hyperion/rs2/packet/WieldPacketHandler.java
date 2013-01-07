@@ -1,5 +1,6 @@
 package org.hyperion.rs2.packet;
 
+import org.hyperion.rs2.handler.HandlerManager;
 import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.container.Equipment;
@@ -15,11 +16,15 @@ import org.hyperion.rs2.net.Packet;
 public class WieldPacketHandler implements PacketHandler {
 
 	@Override
-	public void handle(Player player, Packet packet) {
+	public void handle(Player player, Packet packet) throws Throwable {
 		int interfaceId = packet.getLEShort() & 0xFFFF;
 		int id = packet.getLEShort() & 0xFFFF;
 		int slot = packet.getShortA() & 0xFFFF;
 
+		if(HandlerManager.handleEquipment(player, interfaceId, slot, id)) {
+			return;
+		}
+		
 		switch(interfaceId) {
 		case Inventory.INTERFACE:
 			if(slot >= 0 && slot < Inventory.SIZE) {

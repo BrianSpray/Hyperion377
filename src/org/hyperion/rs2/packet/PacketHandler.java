@@ -14,7 +14,8 @@ public interface PacketHandler {
 	 * Handles a single packet.
 	 * @param player The player.
 	 * @param packet The packet.
+	 * @throws Throwable 
 	 */
-	public void handle(Player player, Packet packet);
+	public void handle(Player player, Packet packet) throws Throwable;
 
 }

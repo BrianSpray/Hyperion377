@@ -20,6 +20,10 @@ public class NPC extends Entity {
 	
 	private int health;
 	
+	private int transformInto;
+	
+	private String forcedChat = "";
+	
 	/**
 	 * Creates the NPC with the specified definition.
 	 * @param definition The definition.
@@ -59,6 +63,24 @@ public class NPC extends Entity {
 	
 	public int getMaxHealth() {
 		return 100;
+	}
+	
+	public int getTransformInto() {
+		return transformInto;
+	}
+
+	public void transformNpc(int npcid) {
+		this.transformInto = npcid;
+		this.getUpdateFlags().flag(UpdateFlag.TRANSFORM);
+	}
+	
+	public String getForcedChat() {
+		return forcedChat;
+	}
+	
+	public void requestForcedChat(String text) {
+		this.forcedChat = text;
+		this.getUpdateFlags().flag(UpdateFlag.FORCED_CHAT);
 	}
 	
 	@Override

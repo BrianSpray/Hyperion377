@@ -181,6 +181,8 @@ public class Player extends Entity implements Persistable {
 	 */
 	private boolean members = true;
 	
+	private String forcedChat;
+	
 	/*
 	 * Attributes.
 	 */
@@ -436,6 +438,10 @@ public class Player extends Entity implements Persistable {
 		return uid;
 	}
 	
+	public String getForcedChat() {
+		return forcedChat;
+	}
+	
 	/**
 	 * Gets the <code>IoSession</code>.
 	 * @return The player's <code>IoSession</code>.
@@ -535,6 +541,11 @@ public class Player extends Entity implements Persistable {
 		} else {
 			
 		}
+	}
+	
+	public void requestForcedChat(String text) {
+		this.forcedChat = text;
+		this.getUpdateFlags().flag(UpdateFlag.FORCED_CHAT);
 	}
 	
 	/**

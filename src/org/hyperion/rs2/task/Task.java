@@ -13,7 +13,8 @@ public interface Task {
 	 * Executes the task. The general contract of the execute method is that it
 	 * may take any action whatsoever.
 	 * @param context The game engine this task is being executed in.
+	 * @throws Throwable 
 	 */
-	public void execute(GameEngine context);
+	public void execute(GameEngine context) throws Throwable;
 
 }

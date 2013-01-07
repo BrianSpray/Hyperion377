@@ -101,7 +101,11 @@ public class GameEngine implements Runnable {
 					submitLogic(new Runnable() {
 						@Override
 						public void run() {
-							task.execute(GameEngine.this);
+							try {
+								task.execute(GameEngine.this);
+							} catch (Throwable e) {
+								e.printStackTrace();
+							}
 						}
 					});
 				} catch(InterruptedException e) {

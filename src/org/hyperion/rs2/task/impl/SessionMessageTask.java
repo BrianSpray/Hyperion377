@@ -34,7 +34,7 @@ public class SessionMessageTask implements Task {
 	}
 
 	@Override
-	public void execute(GameEngine context) {
+	public void execute(GameEngine context) throws Throwable {
 		PacketManager.getPacketManager().handle(session, message);
 	}
 

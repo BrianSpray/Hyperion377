@@ -32,7 +32,7 @@ public class ConsecutiveTask implements Task {
 	}
 	
 	@Override
-	public void execute(GameEngine context) {
+	public void execute(GameEngine context) throws Throwable {
 		for(Task task : tasks) {
 			task.execute(context);
 		}

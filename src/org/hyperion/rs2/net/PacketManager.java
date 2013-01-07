@@ -65,8 +65,9 @@ public class PacketManager {
 	 * Handles a packet.
 	 * @param session The session.
 	 * @param packet The packet.
+	 * @throws Throwable 
 	 */
-	public void handle(IoSession session, Packet packet) {
+	public void handle(IoSession session, Packet packet) throws Throwable {
 		try {
 			packetHandlers[packet.getOpcode()].handle((Player) session.getAttribute("player"), packet);
 		} catch(Exception ex) {

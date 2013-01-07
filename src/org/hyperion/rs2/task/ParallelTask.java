@@ -38,7 +38,11 @@ public class ParallelTask implements Task {
 			context.submitTask(new Runnable() {
 				@Override
 				public void run() {
-					task.execute(context);
+					try {
+						task.execute(context);
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
 				}
 			});
 		}

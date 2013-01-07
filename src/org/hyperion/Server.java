@@ -23,12 +23,13 @@ public class Server {
 	 * Logger instance.
 	 */
 	private static final Logger logger = Logger.getLogger(Server.class.getName());
-	
+
 	/**
 	 * The entry point of the application.
 	 * @param args The command line arguments.
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		logger.info("Starting Hyperion...");
 		World.getWorld(); // this starts off background loading
 		try {

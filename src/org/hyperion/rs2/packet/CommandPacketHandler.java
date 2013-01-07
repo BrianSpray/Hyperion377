@@ -12,6 +12,8 @@ import org.hyperion.rs2.model.NPC;
 import org.hyperion.rs2.model.NPCDefinition;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
+import org.hyperion.rs2.model.UpdateFlags;
+import org.hyperion.rs2.model.UpdateFlags.UpdateFlag;
 import org.hyperion.rs2.model.World;
 import org.hyperion.rs2.model.container.Bank;
 import org.hyperion.rs2.net.ActionSender;
@@ -80,8 +82,13 @@ public class CommandPacketHandler implements PacketHandler {
 					}
 					player.playGraphics(Graphic.create(id, delay, 0));
 				}
+			} else if(command.equals("proj")) {
+				ActionSender.sendProjectile(player, Location.create(3222, 3222, 0), Location.create(3222, 3215, 0), 24, 1, 1, 1, 1, 1, 1, 1, 1);
 			} else if(command.equals("bank")) {
 				Bank.open(player);
+			} else if(command.equals("nt")) {
+				NPC npc1 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[1]));
+				npc1.transformNpc(Integer.parseInt(args[2]));
 			} else if(command.equals("npc")) {
 				int id = Integer.parseInt(args[1]);
 				NPC npc = new NPC(NPCDefinition.forId(id));

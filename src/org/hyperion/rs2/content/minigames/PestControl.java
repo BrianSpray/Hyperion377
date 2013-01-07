@@ -1,5 +1,6 @@
 package org.hyperion.rs2.content.minigames;
 
+import org.hyperion.rs2.handler.interfaces.ButtonHandler;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.net.ActionSender;
@@ -24,5 +25,5 @@ public class PestControl {
 		ActionSender.sendString(player, 18773, "Prayer - " + receivedXp(player, Skills.PRAYER) + " xp");
 		ActionSender.sendInterface(player, 18691);
 	}
-	
+
 }

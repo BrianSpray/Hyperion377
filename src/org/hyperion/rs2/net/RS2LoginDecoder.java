@@ -1,5 +1,6 @@
 package org.hyperion.rs2.net;
 
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import org.hyperion.rs2.net.ondemand.OnDemandPool;
 import org.hyperion.rs2.net.ondemand.OnDemandRequest;
 import org.hyperion.rs2.util.IoBufferUtils;
 import org.hyperion.rs2.util.NameUtils;
+
 
 /**
  * Login protocol decoding class.
@@ -68,6 +70,10 @@ public class RS2LoginDecoder extends CumulativeProtocolDecoder {
 	 */
 	private static final SecureRandom RANDOM = new SecureRandom();
 	
+	private static final BigInteger RSA_MODULUS = new BigInteger("108624200374573610186158874989173249480271063850664536021411519641676158455634506443247873589723861746525311021125441283923237562487401954091346575284582461457453013951789999002029406051097514683965194004030886405056156793281686698698469498749182113160974980338065817624942861880069691102861920480342248733383");
+
+	private static final BigInteger RSA_EXPONENT = new BigInteger("26398181780762529402245333200368682491909566106924852605597163027495554812134989153022092599043775974440524110555333679128513735107448478307107083091346026319192102531752002372038744636493350500830718201098102361439788026771125796889227409677733117762306123327302267310405482272355729237225205224778550895921");
+
 	/**
 	 * Initial login response.
 	 */
@@ -259,28 +265,32 @@ public class RS2LoginDecoder extends CumulativeProtocolDecoder {
 				 * 317 clients and this server the RSA is disabled) and
 				 * check it is equal to 10.
 				 */
-				int blockOpcode = in.get() & 0xFF;
+				byte[] encryptionBytes = new byte[encryptSize];
+				in.get(encryptionBytes);
+				IoBuffer rsaBuffer = IoBuffer.wrap(new BigInteger(encryptionBytes).modPow(RSA_EXPONENT, RSA_MODULUS).toByteArray());
+				int blockOpcode = rsaBuffer.get() & 0xFF;
+
 				if(blockOpcode != 10) {
 					logger.info("Invalid login block opcode : " + blockOpcode);
 					session.close(false);
-					in.rewind();
+					rsaBuffer.rewind();
 					return false;
 				}
 
 				/*
 				 * We read the client's session key.
 				 */
-				long clientKey = in.getLong();
+				long clientKey = rsaBuffer.getLong();
 				
 				/*
 				 * And verify it has the correct server session key.
 				 */
 				long serverKey = (Long) session.getAttribute("serverKey");
-				long reportedServerKey = in.getLong();
+				long reportedServerKey = rsaBuffer.getLong();
 				if(reportedServerKey != serverKey) {
 					logger.info("Server key mismatch (expected : " + serverKey + ", reported : " + reportedServerKey + ")");
 					session.close(false);
-					in.rewind();
+					rsaBuffer.rewind();
 					return false;
 				}
 				
@@ -292,13 +302,13 @@ public class RS2LoginDecoder extends CumulativeProtocolDecoder {
 				 * However, some clients send a hardcoded or random UID,
 				 * making it useless in the private server scene.
 				 */
-				int uid = in.getInt();
+				int uid = rsaBuffer.getInt();
 				
 				/*
 				 * We read and format the name and passwords.
 				 */
-				String name = NameUtils.formatName(IoBufferUtils.getRS2String(in));
-				String pass = IoBufferUtils.getRS2String(in);
+				String name = NameUtils.formatName(IoBufferUtils.getRS2String(rsaBuffer));
+				String pass = IoBufferUtils.getRS2String(rsaBuffer);
 				logger.info("Login request : username=" + name + " password=" + pass);
 				
 				/*

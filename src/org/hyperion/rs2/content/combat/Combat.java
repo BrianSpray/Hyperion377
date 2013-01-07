@@ -194,7 +194,7 @@ public class Combat {
 		}
 		if (aggressor instanceof Player) {
 			((Player) aggressor).getSkills().addExperience(Skills.ATTACK /*getAttackStyle*/, damage.getDamage() * 4);
-			((Player) aggressor).getSkills().addExperience(Skills.HITPOINTS /*getAttackStyle*/, damage.getDamage() * 1.33);
+			//((Player) aggressor).getSkills().addExperience(Skills.HITPOINTS /*getAttackStyle*/, damage.getDamage() * 1.33);
 		}
 	}
 	

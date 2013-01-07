@@ -200,7 +200,7 @@ public class PlayerUpdateTask implements Task {
 				appendAnimationUpdate(block, otherPlayer);
 			}
 			if(flags.get(UpdateFlag.FORCED_CHAT)) {
-				block.putRS2String(""); //player.getForcedChat(); Eventually add that.
+				block.putRS2String(player.getForcedChat());
 			}
 			if(flags.get(UpdateFlag.FACE_ENTITY)) {
 				Entity entity = otherPlayer.getInteractingEntity();
