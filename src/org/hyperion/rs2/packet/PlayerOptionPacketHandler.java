@@ -29,6 +29,18 @@ public class PlayerOptionPacketHandler implements PacketHandler {
 			 */
 			option3(player, packet);
 			break;
+		case 116:
+			/*
+			 * Option 4.
+			 */
+			option4(player, packet);
+			break;
+		case  45:
+			/*
+			 * Option 5.
+			 */
+			option5(player, packet);
+			break;
 		}
 	}
 
@@ -66,10 +78,28 @@ public class PlayerOptionPacketHandler implements PacketHandler {
 	 * @param packet
 	 */
 	private void option3(Player player, Packet packet) {
-		int id = packet.getLEShortA() & 0xFFFF;
+		int id = packet.getLEShort() & 0xFFFF;
 		if(id < 0 || id >= Constants.MAX_PLAYERS) {
 			return;
 		}
+	}
+	
+
+	private void option4(Player player, Packet packet) {
+		int playerIndex = packet.getLEShort()  & 0xFFFF;
+		if(playerIndex < 0 || playerIndex >= Constants.MAX_PLAYERS) {
+			return;
+		}
+		
+	}
+	
+
+	private void option5(Player player, Packet packet) {
+		int playerIndex = packet.getShortA() & 0xFFFF;
+		if(playerIndex < 0 || playerIndex >= Constants.MAX_PLAYERS) {
+			return;
+		}
+		
 	}
 		
 }
