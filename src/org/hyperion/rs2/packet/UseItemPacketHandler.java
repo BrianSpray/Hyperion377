@@ -3,7 +3,7 @@ package org.hyperion.rs2.packet;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.net.Packet;
 
-public class ItemOnXPacketHandler implements PacketHandler {
+public class UseItemPacketHandler implements PacketHandler {
 	
 	private static final int ITEM_ON_INVENTORY_ITEM = 1;
 	
