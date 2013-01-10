@@ -19,7 +19,7 @@ public class ObjectOptionPacketHandler implements PacketHandler {
 	/**
 	 * Option 1 opcode.
 	 */
-	private static final int OPTION_1 = 181, OPTION_2 = 241;
+	private static final int OPTION_1 = 181, OPTION_2 = 241, OPTION_3 = 50;
 
 	@Override
 	public void handle(Player player, Packet packet) {
@@ -29,6 +29,9 @@ public class ObjectOptionPacketHandler implements PacketHandler {
 			break;
 		case OPTION_2:
 			handleOption2(player, packet);
+			break;
+		case OPTION_3:
+			handleOption3(player, packet);
 			break;
 		}
 	}
@@ -74,5 +77,18 @@ public class ObjectOptionPacketHandler implements PacketHandler {
         }
       
     }
+    
+    /**
+     * Handles the option 3 packet.
+     * @param player The player.
+     * @param packet The packet.
+     */
+	private void handleOption3(Player player, Packet packet) {
+        int yCoord = packet.getShortA() & 0xFFFF;
+        int objectId = packet.getLEShort() & 0xFFFF;
+        int xCoord = packet.getLEShortA() & 0xFFFF;
+        System.out.println("Object Id: " + objectId + " X: " + xCoord + " Y: " + yCoord);
+		
+	}
 
 }
