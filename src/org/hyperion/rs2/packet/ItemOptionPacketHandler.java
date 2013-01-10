@@ -1,5 +1,7 @@
 package org.hyperion.rs2.packet;
 
+import org.hyperion.rs2.handler.HandlerManager;
+import org.hyperion.rs2.model.Location;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.container.Bank;
 import org.hyperion.rs2.model.container.Container;
@@ -38,9 +40,19 @@ public class ItemOptionPacketHandler implements PacketHandler {
 	 * Option 5 opcode.
 	 */
 	private static final int OPTION_5 = 158;
+	
+	/**
+	 * Drop Item
+	 */
+	private static final int DROP_ITEM = 4;
+	
+	/**
+	 * Pickup Ground Item
+	 */
+	private static final int TAKE_GROUND_ITEM = 71;
 
 	@Override
-	public void handle(Player player, Packet packet) {
+	public void handle(Player player, Packet packet) throws Throwable {
 		switch(packet.getOpcode()) {
 		case OPTION_1:
 			handleItemOption1(player, packet);
@@ -56,6 +68,12 @@ public class ItemOptionPacketHandler implements PacketHandler {
 			break;
 		case OPTION_5:
 			handleItemOption5(player, packet);
+			break;
+		case TAKE_GROUND_ITEM:
+			handleTakeGroundItem(player, packet);
+			break;
+		case DROP_ITEM:
+			handleDropItem(player, packet);
 			break;
 		}
 	}
@@ -186,4 +204,37 @@ public class ItemOptionPacketHandler implements PacketHandler {
 		}
 	}
 
+	/**
+	 * Handles picking up an item.
+	 * @param player
+	 * @param packet
+	 * @throws Throwable
+	 */
+	private void handleTakeGroundItem(Player player, Packet packet) throws Throwable {
+		int itemId = packet.getLEShortA();
+		int xCoord = packet.getByte();
+		int yCoord = packet.getShortA();
+		System.out.println("Item: " + itemId + " X: " + xCoord + " Y: " + yCoord + " Z: " + player.getLocation().getZ());
+		if(HandlerManager.handlePickup(player, itemId, Location.create(xCoord, yCoord, player.getLocation().getZ()))) {
+			return;
+		}		
+
+	}
+	
+	/**
+	 * Handles dropping an item
+	 * @param player
+	 * @param packet
+	 * @throws Throwable
+	 */
+	private void handleDropItem(Player player, Packet packet) throws Throwable {
+		int slotId = packet.getLEShort();
+		int itemId = packet.getLEShortA();
+		int interfaceId = packet.getLEShortA();
+		System.out.println("Item: " + itemId + " Slot Id: " + slotId + " Interface Id: " + interfaceId);
+		if(HandlerManager.handleDrop(player, interfaceId, itemId, slotId)) {
+			return;
+		}
+	}
+	
 }
