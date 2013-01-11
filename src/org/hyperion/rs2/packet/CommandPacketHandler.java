@@ -197,6 +197,12 @@ public class CommandPacketHandler implements PacketHandler {
             } else {
                 ActionSender.sendMessage(player, "Syntax is ::skill [skill:int] [lvl:int].");
             }
+        } else if ((command.startsWith("pnpc"))) {
+            if (args.length >= 2) {
+              //player.getAppearance().
+            } else {
+                ActionSender.sendMessage(player, "Syntax is ::pnpc [id].");
+            }
         } else if (command.startsWith("enablepvp")) {
             player.updatePlayerAttackOptions(true);
             ActionSender.sendMessage(player, "PvP combat enabled.");
