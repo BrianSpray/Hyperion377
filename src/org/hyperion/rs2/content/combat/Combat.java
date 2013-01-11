@@ -13,11 +13,6 @@ import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.Damage.Hit;
 import org.hyperion.rs2.model.Damage.HitType;
 
-/**
- * Handles the combat system.
- * @author Brett
- *
- */
 public class Combat {
 	
 	

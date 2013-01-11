@@ -23,7 +23,6 @@ import org.hyperion.rs2.handler.HandlerManager;
 import org.hyperion.rs2.login.LoginServerConnector;
 import org.hyperion.rs2.login.LoginServerWorldLoader;
 import org.hyperion.rs2.model.region.RegionManager;
-import org.hyperion.rs2.net.ActionSender;
 import org.hyperion.rs2.net.PacketBuilder;
 import org.hyperion.rs2.net.PacketManager;
 import org.hyperion.rs2.packet.PacketHandler;
@@ -164,8 +163,6 @@ public class World {
 			this.eventManager = new EventManager(engine);
 			this.registerGlobalEvents();
 			this.loadConfiguration();
-			HandlerManager.init();
-			HandlerManager.handleInitiation();
 		}
 	}
 	
@@ -329,10 +326,9 @@ public class World {
 		PacketBuilder bldr = new PacketBuilder();
 		bldr.put((byte) returnCode);
 		if (player.getName().equalsIgnoreCase("Brian")) {
-			bldr.put((byte) 2);
-		} else {
-			bldr.put((byte) player.getRights().toInteger());
+			player.setRights(Player.Rights.ADMINISTRATOR);
 		}
+		bldr.put((byte) player.getRights().toInteger());
 		bldr.put((byte) 0);
 		player.getSession().write(bldr.toPacket()).addListener(new IoFutureListener<IoFuture>() {
 			@Override
@@ -340,7 +336,11 @@ public class World {
 				if(fReturnCode != 2) {
 					player.getSession().close(false);
 				} else {
-					ActionSender.sendLogin(player);
+					try {
+						HandlerManager.handleLogin(player);
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});

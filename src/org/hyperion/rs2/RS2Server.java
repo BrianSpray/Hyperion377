@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.filter.firewall.ConnectionThrottleFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.hyperion.rs2.GameEngine;
 import org.hyperion.rs2.model.World;
@@ -22,7 +21,7 @@ public class RS2Server {
 	/**
 	 * The port to listen on.
 	 */
-	public static final int PORT = 43594;
+	public static final int PORT = 43596;
 
 	/**
 	 * Logger instance.

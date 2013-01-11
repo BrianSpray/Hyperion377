@@ -21,9 +21,6 @@ public class WieldPacketHandler implements PacketHandler {
 		int id = packet.getLEShort() & 0xFFFF;
 		int slot = packet.getShortA() & 0xFFFF;
 
-		if(HandlerManager.handleEquipment(player, interfaceId, slot, id)) {
-			return;
-		}
 		
 		switch(interfaceId) {
 		case Inventory.INTERFACE:

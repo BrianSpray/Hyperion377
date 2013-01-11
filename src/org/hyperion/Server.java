@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.hyperion.fileserver.FileServer;
 import org.hyperion.rs2.RS2Server;
+import org.hyperion.rs2.handler.HandlerManager;
 import org.hyperion.rs2.model.World;
 
 /**
@@ -32,6 +33,8 @@ public class Server {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Starting Hyperion...");
 		World.getWorld(); // this starts off background loading
+		HandlerManager.init();
+		HandlerManager.handleInitiation();
 		try {
 			new FileServer().bind().start();
 			new RS2Server().bind(RS2Server.PORT).start();

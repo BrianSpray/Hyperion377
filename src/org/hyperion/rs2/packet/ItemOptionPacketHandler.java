@@ -50,6 +50,11 @@ public class ItemOptionPacketHandler implements PacketHandler {
 	 * Pickup Ground Item
 	 */
 	private static final int TAKE_GROUND_ITEM = 71;
+	
+	/**
+	 * Used for things such as "Light" logs.
+	 */
+	private static final int GROUND_ITEM_OPTION = 54;
 
 	@Override
 	public void handle(Player player, Packet packet) throws Throwable {
@@ -71,6 +76,9 @@ public class ItemOptionPacketHandler implements PacketHandler {
 			break;
 		case TAKE_GROUND_ITEM:
 			handleTakeGroundItem(player, packet);
+			break;
+		case GROUND_ITEM_OPTION:
+			handleGroundItemOption(player, packet);
 			break;
 		case DROP_ITEM:
 			handleDropItem(player, packet);
@@ -215,10 +223,22 @@ public class ItemOptionPacketHandler implements PacketHandler {
 		int xCoord = packet.getByte();
 		int yCoord = packet.getShortA();
 		System.out.println("Item: " + itemId + " X: " + xCoord + " Y: " + yCoord + " Z: " + player.getLocation().getZ());
-		if(HandlerManager.handlePickup(player, itemId, Location.create(xCoord, yCoord, player.getLocation().getZ()))) {
-			return;
-		}		
+		//if(HandlerManager.handlePickup(player, itemId, Location.create(xCoord, yCoord, player.getLocation().getZ()))) {
+		//	return;
+		//}		
 
+	}
+	
+	/**
+	 * Handles the ground Item Option, e.g. 'Light' logs
+	 * @param player
+	 * @param packet
+	 */
+	private void handleGroundItemOption(Player player, Packet packet) {
+		int groundItemId = packet.getShortA();
+		int yCoord = packet.getLEShort();
+		int xCoord = packet.getShort();
+		System.out.println("Ground Item: " + groundItemId + " X: " + xCoord + " Y: " + yCoord);
 	}
 	
 	/**
@@ -232,9 +252,9 @@ public class ItemOptionPacketHandler implements PacketHandler {
 		int itemId = packet.getLEShortA();
 		int interfaceId = packet.getLEShortA();
 		System.out.println("Item: " + itemId + " Slot Id: " + slotId + " Interface Id: " + interfaceId);
-		if(HandlerManager.handleDrop(player, interfaceId, itemId, slotId)) {
-			return;
-		}
+		//if(HandlerManager.handleDrop(player, interfaceId, itemId, slotId)) {
+		//	return;
+		//}
 	}
 	
 }

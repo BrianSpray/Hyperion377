@@ -23,64 +23,6 @@ import org.hyperion.rs2.net.Packet.Type;
  */
 public class ActionSender {
 	
-	/**
-	 * Sends all the login packets.
-	 * @return The action sender instance, for chaining.
-	 */
-	public static void sendLogin(Player player) {
-		player.setActive(true);
-		sendDetails(player);
-		sendMessage(player, "Welcome to RuneScape.");
-		
-		sendRunEnergy(player);
-		
-		sendFriendServer(player, 2); 
-		//sendFriendStatus(1); // 1 is World1, -45 is Classic1
-		
-		//sendSynchronizeConfigs();
-		
-		sendMapRegion(player);
-		
-		sendGroundItem(player, Location.create(3222, 3223, 0), 4151, 0, 1);
-		
-		sendHintIconLocation(player, 2, 3225, 3222,(byte) 0);
-		sendSidebarInterfaces(player);
-		
-		//sendWelcomeScreen();
-
-		//sendWalkableInterface(player, 197);
-		int ycoord = player.getLocation().getY();
-		if (ycoord > 6400) {
-			ycoord -= 6400;
-		}
-		int wildernessLevel = 1 + (ycoord - 3520) / 8;
-		//sendString(player, 199, "Level: " + wildernessLevel);		
-		//sendMultiWayIcon(player, 1);
-		
-		sendTextColor(player, 7332, Color.GREEN);
-				
-		sendInterfaceConfig(player, 12323, false);
-		sendConfig(player, 300, 100 * 10);
-		sendConfig(player, 301, 0);
-
-		sendInterfaceConfig(player, 4240, true);
-		Item[] whips = {new Item(1673), new Item(1675), new Item(1677) ,new Item(1679) ,new Item(1681) , new Item(1683), new Item(6579)};
-		sendUpdateItems(player, 4245, whips);
-
-
-		
-		sendInteractionOption(player, "Follow", 3, true);
-		sendInteractionOption(player, "Trade with", 4, true);
-		
-		InterfaceContainerListener inventoryListener = new InterfaceContainerListener(player, Inventory.INTERFACE);
-		player.getInventory().addListener(inventoryListener);
-		
-		InterfaceContainerListener equipmentListener = new InterfaceContainerListener(player, Equipment.INTERFACE);
-		player.getEquipment().addListener(equipmentListener);
-		player.getEquipment().addListener(new EquipmentContainerListener(player));
-		player.getEquipment().addListener(new WeaponContainerListener(player));
-		
-	}
 	
 	/**
 	 * Sends the packet to construct a map region.

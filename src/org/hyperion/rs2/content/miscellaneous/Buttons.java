@@ -1,136 +1,143 @@
 package org.hyperion.rs2.content.miscellaneous;
 
-import org.hyperion.rs2.handler.LogicHandler;
-import org.hyperion.rs2.handler.interfaces.ButtonHandler;
+import org.hyperion.rs2.handler.LogicConstructorHandler;
+import org.hyperion.rs2.handler.LogicType;
+import org.hyperion.rs2.handler.impl.ButtonHandler;
 import org.hyperion.rs2.model.Animation;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.net.ActionSender;
 
-public class Buttons extends LogicHandler implements ButtonHandler {
+public class Buttons extends LogicConstructorHandler implements ButtonHandler {
+	
+	public Buttons() {
+		super(LogicType.DEFAULT,
+			new Object[][] {
+				{ButtonHandler.class, new int[] {152, 153, 161, 162, 163, 164, 165}}
+			}
+		);
+	}
 
 	@Override
-	public boolean handleButton(Player player, int buttonId) throws Throwable {
+	public boolean handleButton(Player player, int packetId, int buttonId) throws Throwable {
 		switch(buttonId) {
 			case 152:
 				if(player.getWalkingQueue().isRunningToggled()) {
 					player.getWalkingQueue().setRunningToggled(false);
 				}
-				break;
+				return true;
 			case 153:
 				if(!player.getWalkingQueue().isRunningToggled()) {
 					player.getWalkingQueue().setRunningToggled(true);
 				}
-				break;
+				return true;
 			case 161:
 				player.playAnimation(Animation.CRY);
-				break;
+				return true;
 			case 162:
 				player.playAnimation(Animation.THINKING);
-				break;
+				return true;
 			case 163:
 				player.playAnimation(Animation.WAVE);
-				break;
+				return true;
 			case 164:
 				player.playAnimation(Animation.BOW);
-				break;
+				return true;
 			case 165:
 				player.playAnimation(Animation.ANGRY);
-				break;
+				return true;
 			case 166:
 				player.playAnimation(Animation.DANCE);
-				break;
+				return true;
 			case 167:
 				player.playAnimation(Animation.BECKON);
-				break;
+				return true;
 			case 168:
 				player.playAnimation(Animation.YES_EMOTE);
-				break;
+				return true;
 			case 169:
 				player.playAnimation(Animation.NO_EMOTE);
-				break;
+				return true;
 			case 170:
 				player.playAnimation(Animation.LAUGH);
-				break;
+				return true;
 			case 171:
 				player.playAnimation(Animation.CHEER);
-				break;
+				return true;
 			case 172:
 				player.playAnimation(Animation.CLAP);
-				break;
+				return true;
 			case 13362:
 				player.playAnimation(Animation.PANIC);
-				break;
+				return true;
 			case 13363:
 				player.playAnimation(Animation.JIG);
-				break;
+				return true;
 			case 13364:
 				player.playAnimation(Animation.SPIN);
-				break;
+				return true;
 			case 13365:
 				player.playAnimation(Animation.HEADBANG);
-				break;
+				return true;
 			case 13366:
 				player.playAnimation(Animation.JOYJUMP);
-				break;
+				return true;
 			case 13367:
 				player.playAnimation(Animation.RASPBERRY);
-				break;
+				return true;
 			case 13368:
 				player.playAnimation(Animation.YAWN);
-				break;
+				return true;
 			case 13383:
 				player.playAnimation(Animation.GOBLIN_BOW);
-				break;
+				return true;
 			case 13384:
 				player.playAnimation(Animation.GOBLIN_DANCE);
-				break;
+				return true;
 			case 13369:
 				player.playAnimation(Animation.SALUTE);
-				break;
+				return true;
 			case 13370:
 				player.playAnimation(Animation.SHRUG);
-				break;
+				return true;
 			case 11100:
 				player.playAnimation(Animation.BLOW_KISS);
-				break;
+				return true;
 			case 667:
 				player.playAnimation(Animation.GLASS_BOX);
-				break;
+				return true;
 			case 6503:
 				player.playAnimation(Animation.CLIMB_ROPE);
-				break;
+				return true;
 			case 6506:
 				player.playAnimation(Animation.LEAN);
-				break;
+				return true;
 			case 666:
 				player.playAnimation(Animation.GLASS_WALL);
-				break;
+				return true;
 			case 2458:
 				ActionSender.sendLogout(player);
-				break;
+				return true;
 			case 5387:
 				player.getSettings().setWithdrawAsNotes(false);
-				break;
+				return true;
 			case 5386:
 				player.getSettings().setWithdrawAsNotes(true);
-				break;
+				return true;
 			case 8130:
 				player.getSettings().setSwapping(true);
-				break;
+				return true;
 			case 8131:
 				player.getSettings().setSwapping(false);
-				break;
+				return true;
 			case 3651:
 				ActionSender.sendCloseInterfaces(player);
-				break;
+				return true;
 		}
-		System.out.println("Button Id: " + buttonId);
 		return false;
 	}
 
 	@Override
-	public Object getObject() {
+	public Object getInstance() {
 		return this;
 	}
-
 }
