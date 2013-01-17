@@ -9,11 +9,6 @@ import org.hyperion.rs2.model.Palette;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.Palette.PaletteTile;
-import org.hyperion.rs2.model.container.Equipment;
-import org.hyperion.rs2.model.container.Inventory;
-import org.hyperion.rs2.model.container.impl.EquipmentContainerListener;
-import org.hyperion.rs2.model.container.impl.InterfaceContainerListener;
-import org.hyperion.rs2.model.container.impl.WeaponContainerListener;
 import org.hyperion.rs2.net.Packet.Type;
 
 /**

@@ -3,6 +3,7 @@ package org.hyperion.rs2.task.impl;
 import java.util.Iterator;
 
 import org.hyperion.rs2.GameEngine;
+import org.hyperion.rs2.content.defintion.WeaponDefinition;
 import org.hyperion.rs2.model.Appearance;
 import org.hyperion.rs2.model.ChatMessage;
 import org.hyperion.rs2.model.Entity;
@@ -367,15 +368,28 @@ public class PlayerUpdateTask implements Task {
 		playerProps.put((byte) app.getLegColour()); // legc
 		playerProps.put((byte) app.getFeetColour()); // feetc
 		playerProps.put((byte) app.getSkinColour()); // skinc
-		
-		playerProps.putShort((short) 0x328); // stand
-		playerProps.putShort((short) 0x337); // stand turn
-		playerProps.putShort((short) 0x333); // walk
-		playerProps.putShort((short) 0x334); // turn 180
-		playerProps.putShort((short) 0x335); // turn 90 cw
-		playerProps.putShort((short) 0x336); // turn 90 ccw
-		playerProps.putShort((short) 0x338); // run
-		
+		Item weapon = otherPlayer.getEquipment().get(Equipment.SLOT_WEAPON);
+		if (weapon != null) {
+			WeaponDefinition def = WeaponDefinition.forId(weapon.getId());
+			if (weapon != null && def != null) {
+				playerProps.putShort((short) 0x328); // get stand animation
+				playerProps.putShort((short) 0x337); // stand turn
+				playerProps.putShort((short) def.walkAnimation); // walk
+				playerProps.putShort((short) 0x334); // turn 180
+				playerProps.putShort((short) 0x335); // turn 90 cw
+				playerProps.putShort((short) 0x336); // turn 90 ccw
+				playerProps.putShort((short) def.runAnimation); // run
+			}
+		} else {
+			playerProps.putShort((short) 0x328); // stand
+			playerProps.putShort((short) 0x337); // stand turn
+			playerProps.putShort((short) 0x333); // walk
+			playerProps.putShort((short) 0x334); // turn 180
+			playerProps.putShort((short) 0x335); // turn 90 cw
+			playerProps.putShort((short) 0x336); // turn 90 ccw
+			playerProps.putShort((short) 0x338); // run
+			
+		}
 		playerProps.putLong(otherPlayer.getNameAsLong()); // player name
 		playerProps.put((byte) otherPlayer.getSkills().getCombatLevel()); // combat level
 		playerProps.putShort(0); // (skill-level instead of combat-level) otherPlayer.getSkills().getTotalLevel()); // total level

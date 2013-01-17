@@ -1,0 +1,32 @@
+[Item Id]: -1
+[Weapon Interface Id]: 12290
+[Attack Speed]: 2400
+[Walk Animation]: 1660
+[Run Animation]: 1661
+[Attack Animation]: 422
+[Block Animation]: 424
+[Sound effect]: 2720
+[Has Special Attack]: false
+[Poison Type]: 0
+
+[Item Id]: 4151
+[Weapon Interface Id]: 12290
+[Attack Speed]: 2400
+[Walk Animation]: 1660
+[Run Animation]: 1661
+[Attack Animation]: 1658
+[Block Animation]: 1659
+[Sound effect]: 2720
+[Has Special Attack]: true
+[Poison Type]: 0
+
+[Item Id]: 4153
+[Weapon Interface Id]: 12290
+[Attack Speed]: 3000
+[Walk Animation]: 1663
+[Run Animation]: 1664
+[Attack Animation]: 1665
+[Block Animation]: 1666
+[Sound effect]: 2720
+[Has Special Attack]: true
+[Poison Type]: 0

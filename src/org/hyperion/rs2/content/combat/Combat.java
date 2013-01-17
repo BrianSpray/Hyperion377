@@ -4,17 +4,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.hyperion.rs2.content.defintion.WeaponDefinition;
 import org.hyperion.rs2.model.Animation;
 import org.hyperion.rs2.model.Damage;
 import org.hyperion.rs2.model.Entity;
+import org.hyperion.rs2.model.Item;
 import org.hyperion.rs2.model.NPC;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
 import org.hyperion.rs2.model.Damage.Hit;
 import org.hyperion.rs2.model.Damage.HitType;
+import org.hyperion.rs2.model.container.Equipment;
 
 public class Combat {
-	
+	// TODO: REDO EVERYTHING
 	
 	/**
 	 * Attack types.
@@ -146,9 +149,15 @@ public class Combat {
 	 * @return A <code>double</code>-type value of the weapon speed.
 	 */
 	public static int getAttackSpeed(Entity entity) {
-		// TODO
-		// double attackSpeed = player.getEquipment().getWeaponSpeed();
-		return 2400;
+		int attackSpeed = 2400;
+		Item weapon = null;
+		if (entity instanceof Player) {
+			weapon = ((Player) entity).getEquipment().get(Equipment.SLOT_WEAPON);
+			if (weapon != null) {
+				attackSpeed = WeaponDefinition.forId(weapon.getId()).attackSpeed;
+			}
+		}
+		return attackSpeed;
 	}
 	
 	/**
@@ -178,16 +187,24 @@ public class Combat {
 	 * @param damage The damage to be done.
 	 */
 	public static void inflictDamage(Entity recipient, Entity aggressor, Hit damage) {
+		// TODO: Check for shields.
+		int blockAnimation = 424;
+		Item weapon = null;
 		if((recipient instanceof Player) && (aggressor != null)) {
 			Player p = (Player) recipient;
+			weapon = ((Player) recipient).getEquipment().get(Equipment.SLOT_WEAPON);
+			if (weapon != null) {
+				blockAnimation = WeaponDefinition.forId(weapon.getId()).blockAnimation;
+			}
 			p.inflictDamage(damage, aggressor);
-			p.playAnimation(Animation.create(424, 2));
+			p.playAnimation(Animation.create(blockAnimation, 2));
 		} else if ((recipient instanceof NPC) && (aggressor != null)) {
 			NPC n = (NPC) recipient;
 			n.inflictDamage(damage, aggressor);
 			n.playAnimation(Animation.create(424, 2));
 		}
 		if (aggressor instanceof Player) {
+			// TODO: Figure out why adding experience to hit points makes you invincible...
 			((Player) aggressor).getSkills().addExperience(Skills.ATTACK /*getAttackStyle*/, damage.getDamage() * 4);
 			//((Player) aggressor).getSkills().addExperience(Skills.HITPOINTS /*getAttackStyle*/, damage.getDamage() * 1.33);
 		}
@@ -258,11 +275,17 @@ public class Combat {
 	 * @param attackType The type of attack.
 	 */
 	public static void doAttack(Entity source, Entity victim, AttackType attackType) {
+		int attackAnimation = 422;
+		Item weapon = null;
 		if(!canAttack(source, victim))
 			return;
 		if(source instanceof Player) {
+			weapon = ((Player) source).getEquipment().get(Equipment.SLOT_WEAPON);
 			source.setInteractingEntity(victim);
-			source.playAnimation(Animation.create(422, 0));
+			if (weapon != null) {
+				attackAnimation = WeaponDefinition.forId(weapon.getId()).attackAnimation;
+			}
+			source.playAnimation(Animation.create(attackAnimation, 0));
 			inflictDamage(victim, source, calculatePlayerHit(source, victim, attackType));
 		} else if(source instanceof NPC) {
 			source.setInteractingEntity(victim);

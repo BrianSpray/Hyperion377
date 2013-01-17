@@ -21,7 +21,7 @@ public class RS2Server {
 	/**
 	 * The port to listen on.
 	 */
-	public static final int PORT = 43596;
+	public static final int PORT = 43594;
 
 	/**
 	 * Logger instance.

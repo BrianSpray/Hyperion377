@@ -51,10 +51,10 @@ public class CommandPacketHandler implements PacketHandler {
         } else if (command.equals("pos")) {
             ActionSender.sendMessage(player, "You are at: " + player.getLocation() + ".");
         } else if (command.equals("item")) {
-            if (StringUtils.isInteger(args[1]) && args.length >= 2) {
+            if (args.length >= 2) {
                 int id = Integer.parseInt(args[1]);
                 int count = 1;
-                if (StringUtils.isInteger(args[2]) && args.length >= 3) {
+                if (args.length >= 3) {
                     count = Integer.parseInt(args[2]);
                 }
                 player.getInventory().add(new Item(id, count));
@@ -62,10 +62,10 @@ public class CommandPacketHandler implements PacketHandler {
                 ActionSender.sendMessage(player, "Syntax is ::item [id:int] ([count:int]).");
             }
         } else if (command.equals("anim")) {
-            if (StringUtils.isInteger(args[1]) && args.length >= 2) {
+            if (args.length >= 2) {
                 int id = Integer.parseInt(args[1]);
                 int delay = 0;
-                if (StringUtils.isInteger(args[2]) && args.length >= 3) {
+                if (args.length >= 3) {
                     delay = Integer.parseInt(args[2]);
                 }
                 player.playAnimation(Animation.create(id, delay));
