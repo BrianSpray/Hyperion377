@@ -1,296 +1,156 @@
 package org.hyperion.rs2.content.combat;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.hyperion.rs2.content.defintion.WeaponDefinition;
+import org.hyperion.rs2.event.Event;
 import org.hyperion.rs2.model.Animation;
-import org.hyperion.rs2.model.Damage;
 import org.hyperion.rs2.model.Entity;
 import org.hyperion.rs2.model.Item;
-import org.hyperion.rs2.model.NPC;
+import org.hyperion.rs2.model.ItemDefinition;
 import org.hyperion.rs2.model.Player;
 import org.hyperion.rs2.model.Skills;
-import org.hyperion.rs2.model.Damage.Hit;
-import org.hyperion.rs2.model.Damage.HitType;
+import org.hyperion.rs2.model.World;
 import org.hyperion.rs2.model.container.Equipment;
 
-public class Combat {
-	// TODO: REDO EVERYTHING
-	
-	/**
-	 * Attack types.
-	 */
-	public static enum AttackType {
-		/**
-		 * Melee-based attacks.
-		 */
-		MELEE,
-		
-		/**
-		 * Projectile-based attacks.
-		 */
-		RANGED,
-		
-		/**
-		 * Magic-based attacks.
-		 */
-		MAGIC,
-	}
-	
-	public static class CombatSession {
-		private int damage = 0;
-		private long timestamp = 0;
-		
-		public CombatSession() {
-			
-		}
-		
-		public int getDamage() {
-			return this.damage;
-		}
-	}
-	
-	/**
-	 * Represents an instance of combat, where Entity is an assailant and Integer is the sum of their damage done. This is mapped to every victim in combat,
-	 * and used to determine drops.
-	 * @author Brett Russell
-	 */
-	public static class CollectiveCombatSession {
-		private long stamp;
-		private Map<Entity, CombatSession> damageMap;
-		private Set<Entity> names = damageMap.keySet();
-		private boolean isActive;
-		private Entity victim;
-		
-		public CollectiveCombatSession(Entity victim) {
-			java.util.Date date = new java.util.Date();
-			this.stamp = date.getTime();
-			this.isActive = true;
-			this.victim = victim;
-		}
-		
-		/**
-		 * Gets the timestamp for this object (when the session began).
-		 * @return The timestamp.
-		 */
-		public long getStamp() {
-			return stamp;
-		}
-		
-		/**
-		 * Gets the entity with the highest damage count this session.
-		 * @return The entity with the highest damage count.
-		 */
-		public Entity getTopDamage() {
-			Entity top = null;
-			int damageDone = 0;
-			int currentHighest = 0;
-			
-			Iterator<Entity> itr = names.iterator();
-			
-			while(itr.hasNext()) {
-				Entity currentEntity = itr.next();
-				damageDone = damageMap.get(currentEntity).getDamage();
-				if(damageDone > currentHighest) {
-					currentHighest = damageDone;
-					top = currentEntity;
-				}
-			}
-			return top;
-		}
-		
-		/**
-		 * Returns the Map of this session's participants. If you would want it, that is...
-		 * @return A Map of the participants and their damage done.
-		 */
-		public Map<Entity, CombatSession> getDamageCharts() {
-			return damageMap;
-		}
-		
-		/**
-		 * Adds a participant to this session.
-		 * @param participant The participant to add.
-		 */
-		public void addParticipant(Entity participant) {
-			// TODO CombatSession
-			damageMap.put(participant, null);
-		}
-		
-		/**
-		 * Remove a participant.
-		 * @param participant The participant to remove.
-		 */
-		public void removeParticipant(Entity participant) {
-			damageMap.remove(participant);
-		}
-		
-		/**
-		 * Sets this sessions active state.
-		 * @param state A <code>boolean</code> value representing the state.
-		 */
-		public void setState(boolean b) {
-			this.isActive = b;
-		}
-		
-		/**
-		 * Determine the active state of this session.
-		 * @return The active state as a <code>boolean</code> value.
-		 */
-		public boolean getIsActive() {
-			return this.isActive;
-		}
-	}
+/**
+ * @author Brian 
+ * Credits to Scu11, and Hybrent
+ */
 
-	/**
-	 * Get the attackers' weapon speed.
-	 * @param player The player for whose weapon we are getting the speed value.
-	 * @return A <code>double</code>-type value of the weapon speed.
+public class Combat {
+	
+	/** 
+	 * TODO: Check whether or not the entity is already in combat
+	 * Checks if an entity can another another entity.
 	 */
-	public static int getAttackSpeed(Entity entity) {
-		int attackSpeed = 2400;
-		Item weapon = null;
-		if (entity instanceof Player) {
-			weapon = ((Player) entity).getEquipment().get(Equipment.SLOT_WEAPON);
-			if (weapon != null) {
-				attackSpeed = WeaponDefinition.forId(weapon.getId()).attackSpeed;
-			}
+	public boolean canAttack(Entity attacker, Entity victim, boolean messages, boolean cannon) {
+		// Checks if the attacker and victim are dead or null; if either are true you cannot attack.
+		if (attacker.isDead() || victim.isDead() || attacker == null || victim == null) {
+			return false;
 		}
-		return attackSpeed;
+		return true;		
 	}
 	
 	/**
-	 * Checks if an entity can attack another. Shamelessly stolen from another of Graham's projects.
-	 * @param source The source entity.
-	 * @param victim The target entity.
-	 * @return <code>true</code> if so, <code>false</code> if not.
+	 * Starts a combat session.
+	 * @param attacker
+	 * @param victim
 	 */
-	public static boolean canAttack(Entity source, Entity victim) {
-		if(victim.isDead() || source.isDead())
-			return false;
-		if((source instanceof Player) && (victim instanceof Player)) {
-			// attackable zones, etc
-		}
-		if ((source instanceof Player)) {
-			return true;
-		}
-		if((victim instanceof NPC)) {
-			return true;
-		}
+	public void attack(final Entity attacker, Entity victim) {
+		World.getWorld().submit(new Event(1) {
+
+			@Override
+			public void execute() {
+				attacker.getCombatState().setCanAnimate(true);
+				stop();
+			}
+			
+		});
+	}
+	
+	protected boolean attack(final Entity attacker, final Entity victim, boolean retaliating) {
+		
 		return false;
 	}
 	
-	/**
-	 * Inflicts damage on the recipient.
-	 * @param recipient The entity taking the damage.
-	 * @param damage The damage to be done.
-	 */
-	public static void inflictDamage(Entity recipient, Entity aggressor, Hit damage) {
-		// TODO: Check for shields.
-		int blockAnimation = 424;
-		Item weapon = null;
-		if((recipient instanceof Player) && (aggressor != null)) {
-			Player p = (Player) recipient;
-			weapon = ((Player) recipient).getEquipment().get(Equipment.SLOT_WEAPON);
-			if (weapon != null) {
-				blockAnimation = WeaponDefinition.forId(weapon.getId()).blockAnimation;
-			}
-			p.inflictDamage(damage, aggressor);
-			p.playAnimation(Animation.create(blockAnimation, 2));
-		} else if ((recipient instanceof NPC) && (aggressor != null)) {
-			NPC n = (NPC) recipient;
-			n.inflictDamage(damage, aggressor);
-			n.playAnimation(Animation.create(424, 2));
+	public void defend(Entity attacker, Entity victim, boolean blockAnimation) {
+		if (victim instanceof Player ? ((Player) victim).getSettings().isAutoRetaliating() : true) {
+			// Check if the interacting entity is not the attacker
+				// if not then we check the combat state and delay the attacker
+			// set the active combat session to attack the attacker.
 		}
-		if (aggressor instanceof Player) {
-			// TODO: Figure out why adding experience to hit points makes you invincible...
-			((Player) aggressor).getSkills().addExperience(Skills.ATTACK /*getAttackStyle*/, damage.getDamage() * 4);
-			//((Player) aggressor).getSkills().addExperience(Skills.HITPOINTS /*getAttackStyle*/, damage.getDamage() * 1.33);
+		if (blockAnimation && victim.getCombatState().canAnimate()) {
+			int defendAnimation = 424;
+			Item shield = null;
+			Item weapon = null;
+			String shieldName = null;
+			if (victim instanceof Player) {
+				shield = ((Player) victim).getEquipment().get(Equipment.SLOT_SHIELD);
+				weapon = ((Player) victim).getEquipment().get(Equipment.SLOT_WEAPON);
+				shieldName = shield != null ? ItemDefinition.forId(shield.getId()).name : "";
+				if(shield != null && shieldName.contains("shield") || shieldName.contains("ket-xil")) {
+					//defendAnimation = EquipmentDefinition.forId(shield.getId()).defendAnimation;
+				} else if (weapon != null) {
+					defendAnimation = WeaponDefinition.forId(weapon.getId()).blockAnimation;
+				}
+				if (((Player) victim).getSettings().isAutoRetaliating()) {
+					victim.setInteractingEntity(attacker);
+				}
+			} else {
+				victim.setInteractingEntity(attacker);
+			}
+			victim.playAnimation(Animation.create(defendAnimation));
 		}
 	}
+	
 	
 	/**
-	 * Calculates the damage a single hit by a player will do.
-	 * @param source The attacking entity.
-	 * @param victim The defending entity.
-	 * @return An <code>int</code> representing the damage done.
+	 * Calculates the damage of a player.
 	 */
-	public static Hit calculatePlayerHit(Entity source, Entity victim, AttackType attack) {
-		int verdict = 0;
-		HitType hit = HitType.NORMAL_DAMAGE;
-		if(victim instanceof Player) {
-			Player v = (Player) victim;
-			// calculations here
-			verdict = 1;
-			if(verdict >= v.getSkills().getLevel(Skills.HITPOINTS)) {
-				verdict = v.getSkills().getLevel(Skills.HITPOINTS);
-			}
-		} else if(victim instanceof NPC) {
-			NPC v = (NPC) victim;
-			verdict = 1;
-			if(verdict >= v.getHealth()) {
-				verdict = v.getHealth();
-			}
-		}
-		if(verdict == 0) {
-			hit = HitType.NO_DAMAGE;
-		}
-		Hit thisAttack = new Hit(verdict, hit);
-		return thisAttack;
+	public int damage(int maxHit, Entity attacker, Entity victim, AttackType attackType, int skill, int prayer, boolean special, boolean ignorePrayer) {
+		maxHit = 1;
+		return maxHit;	
 	}
 	
-	public static Hit calculateNPCHit(Entity source, Entity victim, AttackType attack) {
-		int verdict = 0;
-		HitType hit = HitType.NORMAL_DAMAGE;
-		if(victim instanceof Player) {
-			Player v = (Player) victim;
-			// calculations here
-			verdict = 1;
-			if(verdict >= v.getSkills().getLevel(Skills.HITPOINTS)) {
-				verdict = v.getSkills().getLevel(Skills.HITPOINTS);
-			}
-		} else if(victim instanceof NPC) {
-			NPC v = (NPC) victim;
-			verdict = 1;
-			if(verdict >= v.getHealth()) {
-				verdict = v.getHealth();
-			}
+	public static enum AttackType {
+		STAB(0),
+		SLASH(1),
+		CRUSH(2),
+		MAGIC(3),
+		RANGE(4);
+
+		private final int id;
+
+		private AttackType(int id) {
+			this.id = id;
 		}
-		if(verdict == 0) {
-			hit = HitType.NO_DAMAGE;
+
+		public int getId() {
+			return id;
 		}
-		Hit thisAttack = new Hit(verdict, hit);
-		return thisAttack;		
 	}
-	
-	public static void initiateCombat(Entity source, Entity victim) {
-		
-	}
-	
-	/**
-	 * Carries out a single attack.
-	 * @param source The entity source of the attack.
-	 * @param victim The entity victim of the attack.
-	 * @param attackType The type of attack.
-	 */
-	public static void doAttack(Entity source, Entity victim, AttackType attackType) {
-		int attackAnimation = 422;
-		Item weapon = null;
-		if(!canAttack(source, victim))
-			return;
-		if(source instanceof Player) {
-			weapon = ((Player) source).getEquipment().get(Equipment.SLOT_WEAPON);
-			source.setInteractingEntity(victim);
-			if (weapon != null) {
-				attackAnimation = WeaponDefinition.forId(weapon.getId()).attackAnimation;
-			}
-			source.playAnimation(Animation.create(attackAnimation, 0));
-			inflictDamage(victim, source, calculatePlayerHit(source, victim, attackType));
-		} else if(source instanceof NPC) {
-			source.setInteractingEntity(victim);
-			source.playAnimation(Animation.create(422, 0));			
-			inflictDamage(victim, source, calculateNPCHit(source, victim, attackType));
+
+	public static enum CombatStyle {
+
+		ACCURATE(0, new int[] { Skills.ATTACK, Skills.HITPOINTS }, new double[] { 4, 1.33 }), 
+		AGGRESSIVE_1(1,new int[] { Skills.STRENGTH }, new double[] { 4 }),
+		AGGRESSIVE_2(2, new int[] { Skills.STRENGTH }, new double[] { 4 }),
+		DEFENSIVE(3, new int[] { Skills.DEFENCE }, new double[] { 4, 1.33 }),
+		CONTROLLED_1(4, new int[] { Skills.ATTACK, Skills.STRENGTH, Skills.DEFENCE }, new double[] { 1.33, 1.33, 1.33 }),
+		CONTROLLED_2(5, new int[] {Skills.ATTACK, Skills.STRENGTH, Skills.DEFENCE }, new double[] { 1.33, 1.33, 1.33 }),
+		CONTROLLED_3(6, new int[] { Skills.ATTACK, Skills.STRENGTH, Skills.DEFENCE }, new double[] { 1.33, 1.33, 1.33 }),
+		AUTOCAST(7, new int[] { Skills.MAGIC }, new double[] { 2 }),
+		DEFENSIVE_AUTOCAST(8, new int[] {Skills.MAGIC, Skills.DEFENCE}, new double[] { 1.33, 1 });
+
+		private final int id;
+
+		private final int[] skills;
+
+		private final double[] experiences;
+
+		private CombatStyle(int id, int[] skills, double[] experiences) {
+			this.id = id;
+			this.skills = skills;
+			this.experiences = experiences;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public int[] getSkills() {
+			return skills;
+		}
+
+		public int getSkill(int index) {
+			return skills[index];
+		}
+
+		public double[] getExperiences() {
+			return experiences;
+		}
+
+		public double getExperience(int index) {
+			return experiences[index];
 		}
 	}
 	

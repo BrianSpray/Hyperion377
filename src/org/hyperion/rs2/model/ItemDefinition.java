@@ -90,7 +90,7 @@ public class ItemDefinition {
 	/**
 	 * Name.
 	 */
-	private final String name;
+	public final String name;
 	
 	/**
 	 * Description.

@@ -72,7 +72,7 @@ public class ActionSender {
 	public static void sendSkill(Player player, int skill) {
 		PacketBuilder bldr = new PacketBuilder(49);
 		bldr.putByteC((byte) skill);
-		bldr.put((byte) player.getSkills().getLevel(skill));
+		bldr.put((byte)  player.getSkills().getLevelForExperience(skill));
 		bldr.putInt((int) player.getSkills().getExperience(skill));
 		player.write(bldr.toPacket());
 	}

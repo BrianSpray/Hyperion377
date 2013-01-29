@@ -1,15 +1,14 @@
 package org.hyperion.rs2.packet;
 
 import org.hyperion.rs2.Constants;
-import org.hyperion.rs2.action.impl.AttackAction;
+import org.hyperion.rs2.handler.HandlerManager;
 import org.hyperion.rs2.model.Player;
-import org.hyperion.rs2.model.World;
 import org.hyperion.rs2.net.Packet;
 
 public class PlayerOptionPacketHandler implements PacketHandler {
 
 	@Override
-	public void handle(Player player, Packet packet) {
+	public void handle(Player player, Packet packet) throws Throwable {
 		switch(packet.getOpcode()) {
 		case 245:
 			/*
@@ -48,15 +47,15 @@ public class PlayerOptionPacketHandler implements PacketHandler {
 	 * Handles the first option on a player option menu.
 	 * @param player
 	 * @param packet
+	 * @throws Throwable 
 	 */
-	private void option1(final Player player, Packet packet) {
+	private void option1(final Player player, Packet packet) throws Throwable {
 		int id = packet.getLEShortA() & 0xFFFF;
 		if(id < 0 || id >= Constants.MAX_PLAYERS) {
 			return;
 		}
-		Player victim = (Player) World.getWorld().getPlayers().get(id);
-		if(victim != null && player.getLocation().isWithinInteractionDistance(victim.getLocation())) {
-			player.getActionQueue().addAction(new AttackAction(player, victim));
+		if (HandlerManager.handlePlayerOption(player, packet.getOpcode(), id)) {
+			return;
 		}
 	}
 	

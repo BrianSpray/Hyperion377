@@ -17,6 +17,8 @@ public class Settings {
 	 */
 	private boolean swapping = true;
 	
+	private boolean retaliating = true;
+	
 	/**
 	 * Sets the withdraw as notes flag.
 	 * @param withdrawAsNotes The flag.
@@ -33,6 +35,10 @@ public class Settings {
 		this.swapping = swapping;
 	}
 	
+	public void setAutoRetaliating(boolean retaliating) {
+		this.retaliating = retaliating;
+	}
+	
 	/**
 	 * Checks if the player is withdrawing as notes.
 	 * @return The withdrawing as notes flag.
@@ -47,6 +53,14 @@ public class Settings {
 	 */
 	public boolean isSwapping() {
 		return swapping;
+	}
+	
+	/**
+	 * Checks if the player is auto-retaliating
+	 * @return
+	 */
+	public boolean isAutoRetaliating() {
+		return retaliating;
 	}
 
 }

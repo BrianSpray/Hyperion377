@@ -85,13 +85,13 @@ public final class LogicHandler {
 		return false;
 	}
 	
-	public boolean playerOption(Player player, int packetId, int option, Player other) throws Throwable {
+	public boolean playerOption(Player player, int packetId, int option) throws Throwable {
 		LinkedList<PlayerOptionHandler> handlers = playerOptionHandlers.get(option);
 		if (handlers == null) {
 			return false;
 		}
 		for (PlayerOptionHandler handler : handlers) {
-			if (handler.handlePlayerOption(player, packetId, option, other)) {
+			if (handler.handlePlayerOption(player, packetId, option)) {
 				return true;
 			}
 		}

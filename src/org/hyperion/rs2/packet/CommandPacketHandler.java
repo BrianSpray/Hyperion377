@@ -206,7 +206,7 @@ public class CommandPacketHandler implements PacketHandler {
             if (StringUtils.isInteger(args[1]) && StringUtils.isInteger(args[2]) && args.length >= 3) {
                 NPC npc1 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[1]));
                 NPC npc2 = (NPC) World.getWorld().getNPCs().get(Integer.parseInt(args[2]));
-                Combat.doAttack(npc1, npc2, AttackType.MELEE);
+                //Combat.doAttack(npc1, npc2, AttackType.MELEE);
             } else {
                 ActionSender.sendMessage(player, "Syntax is ::nvn [id:int] [id:int].");
             }

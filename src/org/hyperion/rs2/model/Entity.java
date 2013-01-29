@@ -3,6 +3,9 @@ package org.hyperion.rs2.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hyperion.rs2.content.combat.Combat;
+import org.hyperion.rs2.content.combat.CombatState;
+import org.hyperion.rs2.model.Damage.Hit;
 import org.hyperion.rs2.model.UpdateFlags.UpdateFlag;
 import org.hyperion.rs2.model.region.Region;
 
@@ -128,6 +131,11 @@ public abstract class Entity {
 	 * Entity's combat aggressor state.
 	 */
 	private boolean isAggressor;
+	
+	private final CombatState combatState = new CombatState(this);
+	
+	private Hit primaryHit, secondaryHit;
+	private final List<Hit> hits = new LinkedList<Hit>();
 	
 	/**
 	 * Creates the entity.
@@ -468,6 +476,47 @@ public abstract class Entity {
 		removeFromRegion(currentRegion);
 	}
 	
+    public CombatState getCombatState() {
+		return combatState;
+	}
+    
+   /* public Combat getActiveCombat() {
+		if (this.getActionSender() == null) {
+			return new Melee(); //TODO npc styles?
+		}
+    	if (getCombatState().getQueuedSpell() != null) {
+			return new Magic();
+		}
+		Item weapon = getEquipment().get(3);
+		if (weapon != null) {
+			EquipmentDefinition equipmentDef = EquipmentDefinition.forId(weapon.getId());
+			if (equipmentDef.weaponStyles[0] == WeaponStyle.RANGED) {
+				return new Range();
+			}
+		}
+    	return new Melee();
+    }*/
+    
+    public Hit getPrimaryHit() {
+		return primaryHit;
+	}
+    
+    public void setPrimaryHit(Hit hit) {
+		this.primaryHit = hit;
+	}
+    
+    public Hit getSecondaryHit() {
+		return secondaryHit;
+	}
+    
+    public void setSecondaryHit(Hit hit) {
+		this.secondaryHit = hit;
+	}
+    
+    public List<Hit> getHitQueue() {
+		return hits;
+	}
+    
 	/**
 	 * Deal a hit to the entity.
 	 * @param damage The damage to be done.

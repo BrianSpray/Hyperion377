@@ -107,9 +107,9 @@ public final class HandlerManager {
 		return false;
 	}
 	
-	public static boolean handlePlayerOption(Player player, int packetId, int option, Player other) throws Throwable {
+	public static boolean handlePlayerOption(Player player, int packetId, int option) throws Throwable {
 		for (LogicType type : LogicType.values()) {
-			if (type.getHandler().playerOption(player, packetId, option, other)) {
+			if (type.getHandler().playerOption(player, packetId, option)) {
 				return true;
 			}
 		}
